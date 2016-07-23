@@ -18,30 +18,4 @@ class Hand extends Collection
             throw new Exception(sprintf("Max number of cards in hand %s", self::MAX_CARDS_COUNT), 3);
         }
     }
-
-    /**
-     * @param int $key
-     * @return Card
-     * @throws Exception
-     */
-    public function pull(int $key) : Card
-    {
-        $card = $this->get($key);
-
-        unset($this->cards[$key]);
-
-        $this->reset();
-
-        return $card;
-    }
-
-    /**
-     * @return Hand
-     */
-    private function reset() : self
-    {
-        $this->cards = array_values($this->cards);
-
-        return $this;
-    }
 }

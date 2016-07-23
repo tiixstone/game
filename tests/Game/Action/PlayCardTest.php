@@ -63,15 +63,20 @@ class PlayCardTest extends TestCase
         $this->expectException(Game\Exception::class);
         $this->expectExceptionCode(Game\Exception::PLAYER_DOESNT_HAVE_CARD_IN_HAND_WITH_REQUIRED_KEY);
 
-        $this->game->action(new Game\Action\PlayCard(10));
+        $this->game->action(new Game\Action\PlayCard('123'));
     }
 
     public function testPlayerDoenNotHaveEnoughManaToPlayCard()
     {
         $this->expectException(Game\Exception::class);
         $this->expectExceptionCode(Game\Exception::PLAYER_DOESNT_HAVE_ENOUGH_MANA_TO_PLAY_CARD);
+        
+        $card = $this->game->currentPlayer()->hand->first();
+        $this->game->action(new Game\Action\PlayCard($card->id()));
 
-        $this->game->action(new Game\Action\PlayCard(0));
-        $this->game->action(new Game\Action\PlayCard(0));
+        $card = $this->game->currentPlayer()->hand->first();
+        $this->game->action(new Game\Action\PlayCard($card->id()));
+
+
     }
 }

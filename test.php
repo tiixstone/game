@@ -1,5 +1,6 @@
 <?php
 
+use Tiixstone\Game\Action\PlayCard;
 use Tiixstone\Game\Card\Minion\Sheep;
 use Tiixstone\Game\Hero\Jaina;
 use Tiixstone\Game\Player;
@@ -46,5 +47,6 @@ $player1 = new Player('Player 1', $player1Hero, $player1Deck, $player1Hand, $pla
 $player2 = new Player('Player 2', $player2Hero, $player2Deck, $player2Hand, $player2Board);
 
 $gameManager = new \Tiixstone\Game\Manager\GameManager();
+$cardsManager = new \Tiixstone\Game\Manager\CardsManager();
 
-$game = new Tiixstone\Game($player1, $player2, $gameManager);
+$game = new Tiixstone\Game($player1, $player2, $gameManager, $cardsManager);

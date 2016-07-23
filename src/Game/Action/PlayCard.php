@@ -10,16 +10,16 @@ class PlayCard extends Action
     /**
      * @var int
      */
-    private $key;
+    private $id;
 
-    public function __construct(int $key)
+    public function __construct(string $id)
     {
-        $this->key = $key;
+        $this->id = $id;
     }
 
     public function process(Game $game)
     {
-        $card = $game->cardsManager->getCardFromHand($game->currentPlayer(), $this->key());
+        $card = $game->cardsManager->getCardFromHand($game->currentPlayer(), $this->id());
 
         $game->gameManager->reducePlayerMana($game->currentPlayer(), $card->cost());
 
@@ -29,10 +29,10 @@ class PlayCard extends Action
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function key() : int
+    public function id() : string
     {
-        return $this->key;
+        return $this->id;
     }
 }

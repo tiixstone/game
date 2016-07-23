@@ -18,20 +18,20 @@ class CardsManager
      * Получаем карту из руки
      *
      * @param Game\Player $player
-     * @param int $key
+     * @param string $id
      * @return Game\Card
      * @throws Game\Exception
      */
-    public function getCardFromHand(Game\Player $player, int $key)
+    public function getCardFromHand(Game\Player $player, string $id)
     {
-        if(!$player->hand->has($key)) {
+        if(!$player->hand->has($id)) {
             throw new Game\Exception(
-                sprintf("Player does not have card with key [%s]", $key),
+                sprintf("Player does not have card with key [%s]", $id),
                 Game\Exception::PLAYER_DOESNT_HAVE_CARD_IN_HAND_WITH_REQUIRED_KEY
             );
         }
         
-        return $player->hand->pull($key);
+        return $player->hand->pull($id);
     }
     
     /**

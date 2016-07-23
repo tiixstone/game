@@ -15,12 +15,4 @@ abstract class Minion extends Card
      * @return int
      */
     abstract public function attackRate() : int;
-
-    /**
-     * @return Minion
-     */
-    public function play()
-    {
-        return $this;
-    }
 }

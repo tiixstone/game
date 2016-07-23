@@ -52,6 +52,20 @@ class GameManager
 
     /**
      * @param Game\Player $player
+     * @param int $amount
+     * @return $this
+     */
+    public function incrementPlayerMana(Game\Player $player, int $amount = 1)
+    {
+        if($player->availableMana() < $this->maxManaCrystals()) {
+            $player->setAvailableMana($player->availableMana() + $amount);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Game\Player $player
      * @return GameManager
      */
     public function incrementPlayerManaCrystals(Game\Player $player) : self

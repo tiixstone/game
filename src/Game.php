@@ -124,4 +124,12 @@ class Game
     {
         return !$this->player1->hero->isAlive() OR !$this->player2->hero->isAlive();
     }
+
+    /**
+     * @return Player
+     */
+    public function winner() : Player
+    {
+        return $this->player1->hero->isAlive() ? $this->player1 : $this->player2;
+    }
 }

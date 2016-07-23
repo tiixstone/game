@@ -7,11 +7,6 @@ abstract class Hero
     /**
      * @var
      */
-    protected $maximumHealth;
-
-    /**
-     * @var
-     */
     protected $health = 30;
 
     /**
@@ -25,7 +20,7 @@ abstract class Hero
     /**
      * @return int
      */
-    public function health()
+    public function health() : int
     {
         return $this->health;
     }
@@ -33,9 +28,9 @@ abstract class Hero
     /**
      * @return int
      */
-    public function maximumHealth()
+    public function maximumHealth() : int
     {
-        return $this->health;
+        return 30;
     }
 
     /**

@@ -17,11 +17,6 @@ abstract class Card
     abstract public function cost() : int;
 
     /**
-     * @return Card
-     */
-    abstract public function play();
-
-    /**
      * @return string
      */
     final public function id()

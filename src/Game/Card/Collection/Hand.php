@@ -12,10 +12,38 @@ class Hand extends Collection
 
     public function __construct(array $cards = [])
     {
-        parent::__construct($cards);
-
-        if($this->count() > self::MAX_CARDS_COUNT) {
-            throw new Exception(sprintf("Max number of cards in hand %s", self::MAX_CARDS_COUNT), 3);
+        if(count($cards) > self::MAX_CARDS_COUNT) {
+            throw new Exception(
+                sprintf("Max number of cards in hand %s", self::MAX_CARDS_COUNT),
+                Exception::EXCEEDED_MAX_NUMBER_CARDS_IN_HAND
+            );
         }
+
+        parent::__construct($cards);
+    }
+
+    /**
+     * @param Card $card
+     * @return Hand
+     * @throws Exception
+     */
+    public function append(Card $card)
+    {
+        if($this->count() >= self::MAX_CARDS_COUNT) {
+            throw new Exception(
+                sprintf("Max number of cards in hand %s", self::MAX_CARDS_COUNT),
+                Exception::EXCEEDED_MAX_NUMBER_CARDS_IN_HAND
+            );
+        }
+
+        return parent::append($card);
+    }
+
+    /**
+     * @return bool
+     */
+    public function maximum()
+    {
+        return $this->count() >= self::MAX_CARDS_COUNT;
     }
 }

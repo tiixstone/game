@@ -2,6 +2,7 @@
 
 namespace Tiixstone\Game\Card\Spell;
 
+use Tiixstone\Game;
 use Tiixstone\Game\Card\Spell;
 
 /**
@@ -24,8 +25,10 @@ class TheCoin extends Spell
     /**
      * @return TheCoin
      */
-    public function play()
+    public function play(Game $game)
     {
+        $game->gameManager->incrementPlayerMana($game->currentPlayer());
+
         return $this;
     }
 }

@@ -10,7 +10,7 @@ abstract class Collection
     /**
      * @var Card[]
      */
-    protected $cards;
+    protected $cards = [];
 
     /**
      * Collection constructor.
@@ -36,9 +36,22 @@ abstract class Collection
      * @param Card $card
      * @return Collection
      */
-    public function append(Card $card) : self
+    public function append(Card $card)
     {
         $this->cards[$card->id()] = $card;
+
+        return $this;
+    }
+
+    /**
+     * @param Card[] $cards
+     * @return $this
+     */
+    public function appendMany(array $cards)
+    {
+        foreach($cards as $card) {
+            $this->append($card);
+        }
 
         return $this;
     }

@@ -101,6 +101,10 @@ class CardsManager
      */
     public function appendToHand(Game\Player $player, Game\Card $card) : self
     {
+        if($player->hand->maximum()) {
+            return $this;
+        }
+        
         $player->hand->append($card);
 
         return $this;
@@ -126,7 +130,7 @@ class CardsManager
     public function placeCardOnBoard(Game\Player $player, Game\Card\Minion $card)
     {
         if(!$player->board->hasVacantPlace()) {
-            throw new Game\Exception("There is not place on board");
+            throw new Game\Exception("There is no vacant place on board", Game\Exception::EXCEEDED_PLACES_ON_BOARD);
         }
         
         $player->board->append($card);

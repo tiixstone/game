@@ -7,5 +7,5 @@ use Tiixstone\Game\Card;
 
 abstract class Spell extends Card
 {
-    abstract public function play(Game $game);
+    abstract public function cast(Game $game);
 }

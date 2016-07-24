@@ -2,8 +2,10 @@
 
 namespace Tiixstone;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tiixstone\Game\Action;
 use Tiixstone\Game\Exception;
+use Tiixstone\Game\Manager\BoardManager;
 use Tiixstone\Game\Manager\CardsManager;
 use Tiixstone\Game\Manager\GameManager;
 use Tiixstone\Game\Manager\PlayCardManager;
@@ -44,18 +46,32 @@ class Game
      */
     public $cardsManager;
 
+    /**
+     * @var BoardManager
+     */
+    public $boardManager;
+
+    /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
+
     public function __construct(
         Player $player1,
         Player $player2,
+        EventDispatcher $eventDispatcher,
         GameManager $gameManager,
-        CardsManager $cardsManager
+        CardsManager $cardsManager,
+        BoardManager $boardManager
     )
     {
         $this->player1 = $player1;
         $this->player2 = $player2;
 
+        $this->eventDispatcher = $eventDispatcher;
         $this->gameManager = $gameManager;
         $this->cardsManager = $cardsManager;
+        $this->boardManager = $boardManager;
 
         $this->gameManager->start($this);
 
@@ -97,6 +113,15 @@ class Game
     public function idlePlayer() : Player
     {
         return $this->moveNumber % 2 ? $this->player1 : $this->player2;
+    }
+
+    /**
+     * @param Player $player
+     * @return bool
+     */
+    public function isPlayerCurrent(Player $player) : bool
+    {
+        return $player->id() == $this->currentPlayer()->id();
     }
 
     /**

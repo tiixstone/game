@@ -3,6 +3,7 @@
 namespace Tests\Tiixstone\Game\Action;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tiixstone\Game;
 use Tiixstone\Game\Hero\Jaina;
 use Tiixstone\Game\Manager\GameManager;
@@ -52,10 +53,12 @@ class PlayCardTest extends TestCase
         $player1 = new \Tiixstone\Game\Player('Jonh Doe', $player1Hero, $player1Deck, $player1Hand, $player1Board);
         $player2 = new \Tiixstone\Game\Player('Agent Smith', $player2Hero, $player2Deck, $player2Hand, $player2Board);
 
+        $eventDispatcher = new EventDispatcher();
         $gameManager = new GameManager();
         $cardsManager = new Game\Manager\CardsManager();
+        $boardManager = new Game\Manager\BoardManager();
 
-        $this->game = new \Tiixstone\Game($player1, $player2, $gameManager, $cardsManager);
+        $this->game = new \Tiixstone\Game($player1, $player2, $eventDispatcher, $gameManager, $cardsManager, $boardManager);
     }
 
     public function testPlayerDoesNotHaveCardWithRequiredKey()

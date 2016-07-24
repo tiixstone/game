@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Game;
+namespace Tests\Tiixstone\Game;
 
 use Tiixstone\Game\Hero\Jaina;
 

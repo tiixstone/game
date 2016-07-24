@@ -2,6 +2,9 @@
 
 namespace Tiixstone\Game;
 
+use Tiixstone\Game\Card\Minion;
+use Tiixstone\Game\Card\Spell;
+
 abstract class Card
 {
     protected $id;
@@ -22,5 +25,21 @@ abstract class Card
     final public function id()
     {
         return $this->id;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSpell()
+    {
+        return $this instanceof Spell;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMinion()
+    {
+        return $this instanceof Minion;
     }
 }

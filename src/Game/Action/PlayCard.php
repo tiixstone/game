@@ -19,30 +19,67 @@ class PlayCard extends Action
 
     public function process(Game $game)
     {
-        if(!$game->currentPlayer()->hand->has($this->id())) {
-            throw new Game\Exception(
-                sprintf("Player does not have card with key [%s]", $this->id()),
-                Game\Exception::PLAYER_DOESNT_HAVE_CARD_IN_HAND_WITH_REQUIRED_KEY
-            );
-        }
-
-        $card = $game->currentPlayer()->hand->get($this->id());
-
-        if($game->currentPlayer()->availableMana() < $card->cost()) {
-            throw new Game\Exception(
-                sprintf("Player does not have enough mana"),
-                Game\Exception::PLAYER_DOESNT_HAVE_ENOUGH_MANA_TO_PLAY_CARD
-            );
+        if(($exception = $this->canBePlayed($game, true)) !== true) {
+            throw $exception;
         }
 
         $card = $game->cardsManager->getCardFromHand($game->currentPlayer(), $this->id());
 
         $game->gameManager->reducePlayerMana($game->currentPlayer(), $card->cost());
 
-        if($card instanceof Game\Card\Minion) {
+        if($card->isMinion()) {
+            /** @var $card Game\Card\Minion */
             $game->cardsManager->placeCardOnBoard($game->currentPlayer(), $card);
-        } elseif($card instanceof Game\Card\Spell)
-            $card->play($game);
+        } elseif($card->isSpell()) {
+            /** @var $card Game\Card\Spell */
+            $card->cast($game);
+        } else {
+            throw new Game\Exception("Invalid card");
+        }
+    }
+
+    /**
+     * @param Game $game
+     * @param bool $throwException
+     * @return bool|Game\Exception
+     * @throws Game\Exception
+     */
+    public function canBePlayed(Game $game, $throwException = false)
+    {
+        if(!$this->cardExists($game)) {
+            if($throwException) {
+                return new Game\Exception(
+                    sprintf("Player does not have card with key [%s]", $this->id()),
+                    Game\Exception::PLAYER_DOESNT_HAVE_CARD_IN_HAND_WITH_REQUIRED_KEY
+                );
+            } else {
+                return false;
+            }
+        }
+
+        $card = $game->currentPlayer()->hand->get($this->id());
+
+        if(!$this->playerHasEnoughMana($game, $card)) {
+            if($throwException) {
+                return new Game\Exception(
+                    sprintf("Player does not have enough mana"),
+                    Game\Exception::PLAYER_DOESNT_HAVE_ENOUGH_MANA_TO_PLAY_CARD
+                );
+            } else {
+                return false;
+            }
+
+        }
+
+        if($card->isMinion() AND !$this->vacantPlaceOnBoard($game)) {
+            if($throwException) {
+                return new Game\Exception("There is no vacant place on board", Game\Exception::EXCEEDED_PLACES_ON_BOARD);
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -51,5 +88,33 @@ class PlayCard extends Action
     public function id() : string
     {
         return $this->id;
+    }
+
+    /**
+     * @param Game $game
+     * @return bool
+     */
+    private function cardExists(Game $game)
+    {
+        return $game->currentPlayer()->hand->has($this->id());
+    }
+
+    /**
+     * @param Game $game
+     * @param Game\Card $card
+     * @return bool
+     */
+    private function playerHasEnoughMana(Game $game, Game\Card $card)
+    {
+        return $game->currentPlayer()->availableMana() >= $card->cost();
+    }
+
+    /**
+     * @param Game $game
+     * @return bool
+     */
+    private function vacantPlaceOnBoard(Game $game)
+    {
+        return $game->boardManager->hasVacantPlace($game->currentPlayer());
     }
 }

@@ -11,7 +11,18 @@ use Tiixstone\Game;
  */
 class GameManager
 {
-    const MAX_MANA_CRYSTALS = 10;
+    /**
+     * @var int
+     */
+    protected $maxManaCrystals = 10;
+
+    /**
+     * @return int
+     */
+    public function maxManaCrystals() : int
+    {
+        return $this->maxManaCrystals;
+    }
 
     /**
      * @param Game $game
@@ -120,13 +131,5 @@ class GameManager
         $game->cardsManager->appendToHand($game->idlePlayer(), new Game\Card\Spell\TheCoin());
 
         return $this;
-    }
-
-    /**
-     * @return int
-     */
-    protected function maxManaCrystals() : int
-    {
-        return self::MAX_MANA_CRYSTALS;
     }
 }

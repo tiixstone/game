@@ -25,7 +25,7 @@ class TheCoin extends Spell
     /**
      * @return TheCoin
      */
-    public function play(Game $game)
+    public function cast(Game $game)
     {
         $game->gameManager->incrementPlayerMana($game->currentPlayer());
 

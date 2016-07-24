@@ -9,6 +9,11 @@ use Tiixstone\Game\Card\Collection\Hand;
 class Player
 {
     /**
+     * @var
+     */
+    private $id;
+
+    /**
      * @var int
      */
     protected $fatigue = 1;
@@ -50,11 +55,20 @@ class Player
 
     public function __construct(string $name, Hero $hero, Deck $deck, Hand $hand, Board $board)
     {
+        $this->id = uniqid();
         $this->name = $name;
         $this->hero = $hero;
         $this->deck = $deck;
         $this->hand = $hand;
         $this->board = $board;
+    }
+
+    /**
+     * @return string
+     */
+    public function id() : string
+    {
+        return $this->id;
     }
 
     /**

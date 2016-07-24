@@ -4,6 +4,7 @@ namespace Tiixstone\Game\Event;
 
 use Tiixstone\Game\Event;
 
-class TurnBegin extends Event
+class TurnBegan extends Event
 {
+    const NAME = 'turn.began';
 }

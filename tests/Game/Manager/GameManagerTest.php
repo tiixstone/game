@@ -2,9 +2,12 @@
 
 namespace Tests\Tiixstone\Game\Manager;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Tiixstone\Factory;
 use Tiixstone\Game;
 use Tiixstone\Game\Action\EndTurn;
 use Tiixstone\Game\Hero\Jaina;
+use Tiixstone\Game\Manager\BoardManager;
 use Tiixstone\Game\Manager\GameManager;
 
 class GameManagerTest extends \PHPUnit\Framework\TestCase
@@ -52,10 +55,12 @@ class GameManagerTest extends \PHPUnit\Framework\TestCase
         $player1 = new \Tiixstone\Game\Player('Jonh Doe', $player1Hero, $player1Deck, $player1Hand, $player1Board);
         $player2 = new \Tiixstone\Game\Player('Agent Smith', $player2Hero, $player2Deck, $player2Hand, $player2Board);
 
+        $eventDispatcher = new EventDispatcher();
         $gameManager = new GameManager();
         $cardsManager = new Game\Manager\CardsManager();
+        $boardManager = new BoardManager();
 
-        $this->game = new \Tiixstone\Game($player1, $player2, $gameManager, $cardsManager);
+        $this->game = new \Tiixstone\Game($player1, $player2, $eventDispatcher, $gameManager, $cardsManager, $boardManager);
     }
 
     public function testSimpleGamePlay()

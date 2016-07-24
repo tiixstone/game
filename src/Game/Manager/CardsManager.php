@@ -15,6 +15,19 @@ use Tiixstone\Game\Card\NullCard;
 class CardsManager
 {
     /**
+     * @var int
+     */
+    protected $maxCardsInHand = 10;
+
+    /**
+     * @return int
+     */
+    public function maxCardsInHand() : int
+    {
+        return $this->maxCardsInHand;
+    }
+
+    /**
      * Получаем карту из руки
      *
      * @param Game\Player $player
@@ -101,7 +114,7 @@ class CardsManager
      */
     public function appendToHand(Game\Player $player, Game\Card $card) : self
     {
-        if($player->hand->maximum()) {
+        if($player->hand->count() >= $this->maxCardsInHand()) {
             return $this;
         }
         
@@ -129,12 +142,16 @@ class CardsManager
      */
     public function placeCardOnBoard(Game\Player $player, Game\Card\Minion $card)
     {
-        if(!$player->board->hasVacantPlace()) {
-            throw new Game\Exception("There is no vacant place on board", Game\Exception::EXCEEDED_PLACES_ON_BOARD);
-        }
+        //if(!$player->board->hasVacantPlace()) {
+        //    throw new Game\Exception("There is no vacant place on board", Game\Exception::EXCEEDED_PLACES_ON_BOARD);
+        //}
         
         $player->board->append($card);
 
         return $this;
+    }
+
+    public function canBePlayed($id)
+    {
     }
 }

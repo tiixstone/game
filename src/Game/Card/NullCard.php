@@ -10,7 +10,7 @@ class NullCard extends Card
     /**
      * @return int
      */
-    public function cost() : int
+    public function defaultCost() : int
     {
         throw new Exception("It is null card");
     }

@@ -4,11 +4,14 @@ namespace Tiixstone;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tiixstone\Game\Action;
+use Tiixstone\Game\Card\Minion;
 use Tiixstone\Game\Exception;
+use Tiixstone\Game\Manager\AttackManager;
 use Tiixstone\Game\Manager\BoardManager;
 use Tiixstone\Game\Manager\CardsManager;
 use Tiixstone\Game\Manager\GameManager;
 use Tiixstone\Game\Manager\PlayCardManager;
+use Tiixstone\Game\Manager\StatsManager;
 use Tiixstone\Game\Player;
 
 class Game
@@ -20,7 +23,7 @@ class Game
      *
      * @var int
      */
-    private $moveNumber = 0;
+    private $moveNumber = 1;
 
     /**
      * Игрок, который ходит первым
@@ -54,7 +57,12 @@ class Game
     /**
      * @var EventDispatcher
      */
-    private $eventDispatcher;
+    public $eventDispatcher;
+
+    /**
+     * @var AttackManager
+     */
+    public $attackManager;
 
     public function __construct(
         Player $player1,
@@ -62,7 +70,8 @@ class Game
         EventDispatcher $eventDispatcher,
         GameManager $gameManager,
         CardsManager $cardsManager,
-        BoardManager $boardManager
+        BoardManager $boardManager,
+        AttackManager $attackManager
     )
     {
         $this->player1 = $player1;
@@ -72,10 +81,47 @@ class Game
         $this->gameManager = $gameManager;
         $this->cardsManager = $cardsManager;
         $this->boardManager = $boardManager;
+        $this->attackManager = $attackManager;
 
-        $this->gameManager->start($this);
+        $this->start();
 
         $this->gameManager->beginTurn($this);
+    }
+
+    /**
+     * @return $this
+     */
+    protected function start()
+    {
+        $this->shufflePlayersDeck();
+
+        $this->drawCardsForPlayers();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function shufflePlayersDeck()
+    {
+        $this->cardsManager->shuffleDeck($this->currentPlayer());
+        $this->cardsManager->shuffleDeck($this->idlePlayer());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function drawCardsForPlayers()
+    {
+        $this->cardsManager->drawMany($this->currentPlayer(), 3);
+        $this->cardsManager->drawMany($this->idlePlayer(), 4);
+
+        $this->cardsManager->appendToHand($this->idlePlayer(), new Game\Card\Spell\TheCoin());
+
+        return $this;
     }
 
     /**
@@ -96,7 +142,31 @@ class Game
         
         $action->process($this);
 
+        $this->sendDeadMinionsToGraveyard();
+
         return $this->isOver();
+    }
+
+    /**
+     * @return $this
+     */
+    private function sendDeadMinionsToGraveyard()
+    {
+        /** @var Player $player */
+        foreach([$this->currentPlayer(), $this->idlePlayer()] as $player) {
+            /** @var Minion $minion */
+            foreach ($player->board->all() as $minion) {
+                if ($minion->isDead($this)) {
+                    $card = $player->board->pull($minion->id());
+
+                    $card->reset();
+
+                    $player->graveyard->append($card);
+                }
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -104,7 +174,7 @@ class Game
      */
     public function currentPlayer() : Player
     {
-        return $this->moveNumber % 2 ? $this->player2 : $this->player1;
+        return $this->moveNumber % 2 ? $this->player1 : $this->player2;
     }
 
     /**
@@ -112,7 +182,7 @@ class Game
      */
     public function idlePlayer() : Player
     {
-        return $this->moveNumber % 2 ? $this->player1 : $this->player2;
+        return $this->moveNumber % 2 ? $this->player2 : $this->player1;
     }
 
     /**

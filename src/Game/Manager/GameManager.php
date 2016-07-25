@@ -26,19 +26,6 @@ class GameManager
 
     /**
      * @param Game $game
-     * @return $this
-     */
-    public function start(Game $game)
-    {
-        $this->shufflePlayersDeck($game);
-
-        $this->drawCardsForPlayers($game);
-
-        return $this;
-    }
-
-    /**
-     * @param Game $game
      * @return GameManager
      */
     public function beginTurn(Game $game) : self
@@ -48,6 +35,18 @@ class GameManager
         $game->currentPlayer()->setAvailableMana($game->currentPlayer()->manaCrystals());
 
         $game->cardsManager->draw($game->currentPlayer());
+
+        $this->removeMinionsExhaustion($game);
+
+        return $this;
+    }
+
+    private function removeMinionsExhaustion(Game $game)
+    {
+        /** @var Game\Card\Minion $minion */
+        foreach($game->currentPlayer()->board->all() as $minion) {
+            $minion->setExhausted(false);
+        }
 
         return $this;
     }
@@ -104,31 +103,6 @@ class GameManager
         }
 
         $player->reduceAvailableMana($amount);
-
-        return $this;
-    }
-
-    /**
-     * @return Game
-     */
-    protected function shufflePlayersDeck(Game $game) : self
-    {
-        $game->cardsManager->shuffleDeck($game->currentPlayer());
-        $game->cardsManager->shuffleDeck($game->idlePlayer());
-
-        return $this;
-    }
-
-    /**
-     * @param $game
-     * @return GameManager
-     */
-    private function drawCardsForPlayers(Game $game) : self
-    {
-        $game->cardsManager->drawMany($game->currentPlayer(), 3);
-        $game->cardsManager->drawMany($game->idlePlayer(), 4);
-
-        $game->cardsManager->appendToHand($game->idlePlayer(), new Game\Card\Spell\TheCoin());
 
         return $this;
     }

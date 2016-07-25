@@ -17,7 +17,7 @@ class TheCoin extends Spell
     /**
      * @return int
      */
-    public function cost() : int
+    public function defaultCost() : int
     {
         return 0;
     }

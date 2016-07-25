@@ -4,6 +4,7 @@ namespace Tiixstone\Game\Action;
 
 use Tiixstone\Game;
 use Tiixstone\Game\Action;
+use Tiixstone\Game\Event\CardPlayed;
 
 class PlayCard extends Action
 {
@@ -25,17 +26,15 @@ class PlayCard extends Action
 
         $card = $game->cardsManager->getCardFromHand($game->currentPlayer(), $this->id());
 
-        $game->gameManager->reducePlayerMana($game->currentPlayer(), $card->cost());
+        $game->gameManager->reducePlayerMana($game->currentPlayer(), $card->cost($game));
 
-        if($card->isMinion()) {
-            /** @var $card Game\Card\Minion */
-            $game->cardsManager->placeCardOnBoard($game->currentPlayer(), $card);
-        } elseif($card->isSpell()) {
-            /** @var $card Game\Card\Spell */
-            $card->cast($game);
-        } else {
-            throw new Game\Exception("Invalid card");
+        if($card instanceof Game\Card\Minion) {
+            $game->boardManager->placeCardOnBoard($game->currentPlayer(), $card);
         }
+
+        $card->play($game);
+
+        $game->eventDispatcher->dispatch(CardPlayed::NAME, new CardPlayed($game->currentPlayer(), $card));
     }
 
     /**
@@ -106,7 +105,7 @@ class PlayCard extends Action
      */
     private function playerHasEnoughMana(Game $game, Game\Card $card)
     {
-        return $game->currentPlayer()->availableMana() >= $card->cost();
+        return $game->currentPlayer()->availableMana() >= $card->cost($game);
     }
 
     /**

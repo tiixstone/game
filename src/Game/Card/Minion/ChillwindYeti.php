@@ -2,16 +2,16 @@
 
 namespace Tiixstone\Game\Card\Minion;
 
-use Tiixstone\Game\Card;
+use Tiixstone\Game\Card\Minion;
 
-class Sheep extends Card\Minion
+class ChillwindYeti extends Minion
 {
     /**
      * @return int
      */
-    public function defaultAttackRate() : int
+    public function defaultCost() : int
     {
-        return 1;
+        return 4;
     }
 
     /**
@@ -19,14 +19,14 @@ class Sheep extends Card\Minion
      */
     public function defaultHealth() : int
     {
-        return 1;
+        return 5;
     }
 
     /**
      * @return int
      */
-    public function defaultCost() : int
+    public function defaultAttackRate() : int
     {
-        return 1;
+        return 4;
     }
 }

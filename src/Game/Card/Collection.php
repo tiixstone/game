@@ -120,4 +120,68 @@ abstract class Collection
     {
         return $this->cards;
     }
+
+    /**
+     * @param string $key
+     * @return bool|mixed|Card
+     */
+    public function prev(string $key)
+    {
+        $position = false;
+
+        $i=0;
+        foreach($this->all() as $card) {
+            if($card->id() == $key) {
+                $position = $i;
+                break;
+            }
+
+            $i++;
+        }
+
+        $i=0;
+        foreach($this->all() as $card) {
+            if($i == ($position - 1)) {
+                return $card;
+            }
+
+            $i++;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $key
+     * @return bool|mixed|Card
+     */
+    public function next(string $key)
+    {
+        $position = false;
+
+        $i=0;
+        foreach($this->all() as $card) {
+            if($card->id() == $key) {
+                $position = $i;
+                break;
+            }
+
+            $i++;
+        }
+
+        if($position === false OR $position == ($this->count() - 1)) {
+            return false;
+        }
+
+        $i=0;
+        foreach($this->all() as $card) {
+            if($i == ($position + 1)) {
+                return $card;
+            }
+
+            $i++;
+        }
+
+        return false;
+    }
 }

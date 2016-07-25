@@ -4,6 +4,7 @@ namespace Tests\Tiixstone\Game\Action;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Tiixstone\Factory;
 use Tiixstone\Game;
 use Tiixstone\Game\Hero\Jaina;
 use Tiixstone\Game\Manager\GameManager;
@@ -17,10 +18,18 @@ class PlayCardTest extends TestCase
 
     public function setUp()
     {
-        $player1Hero = new Jaina();
-        $player2Hero = new Jaina();
-
-        $player1Deck = new Game\Card\Collection\Deck([
+        $this->game = Factory::createForTest([
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+        ], [
             new Game\Card\Minion\Sheep(),
             new Game\Card\Minion\Sheep(),
             new Game\Card\Minion\Sheep(),
@@ -32,33 +41,17 @@ class PlayCardTest extends TestCase
             new Game\Card\Minion\Sheep(),
             new Game\Card\Minion\Sheep(),
         ]);
-        $player1Hand = new Game\Card\Collection\Hand([]);
-        $player1Board = new Game\Card\Collection\Board([]);
+    }
 
-        $player2Deck = new Game\Card\Collection\Deck([
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-        ]);
-        $player2Hand = new Game\Card\Collection\Hand([]);
-        $player2Board = new Game\Card\Collection\Board([]);
+    public function testMinionPlayed()
+    {
+        $this->assertEquals(0, $this->game->currentPlayer()->board->count());
+        $this->assertEquals(4, $this->game->currentPlayer()->hand->count());
 
-        $player1 = new \Tiixstone\Game\Player('Jonh Doe', $player1Hero, $player1Deck, $player1Hand, $player1Board);
-        $player2 = new \Tiixstone\Game\Player('Agent Smith', $player2Hero, $player2Deck, $player2Hand, $player2Board);
+        $this->game->action(new Game\Action\PlayCard($this->game->currentPlayer()->hand->first()->id()));
 
-        $eventDispatcher = new EventDispatcher();
-        $gameManager = new GameManager();
-        $cardsManager = new Game\Manager\CardsManager();
-        $boardManager = new Game\Manager\BoardManager();
-
-        $this->game = new \Tiixstone\Game($player1, $player2, $eventDispatcher, $gameManager, $cardsManager, $boardManager);
+        $this->assertEquals(1, $this->game->currentPlayer()->board->count());
+        $this->assertEquals(3, $this->game->currentPlayer()->hand->count());
     }
 
     public function testPlayerDoesNotHaveCardWithRequiredKey()
@@ -79,7 +72,5 @@ class PlayCardTest extends TestCase
 
         $card = $this->game->currentPlayer()->hand->first();
         $this->game->action(new Game\Action\PlayCard($card->id()));
-
-
     }
 }

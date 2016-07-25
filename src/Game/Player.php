@@ -4,6 +4,7 @@ namespace Tiixstone\Game;
 
 use Tiixstone\Game\Card\Collection\Board;
 use Tiixstone\Game\Card\Collection\Deck;
+use Tiixstone\Game\Card\Collection\Graveyard;
 use Tiixstone\Game\Card\Collection\Hand;
 
 class Player
@@ -53,6 +54,11 @@ class Player
      */
     public $board;
 
+    /**
+     * @var
+     */
+    public $graveyard;
+
     public function __construct(string $name, Hero $hero, Deck $deck, Hand $hand, Board $board)
     {
         $this->id = uniqid();
@@ -61,6 +67,7 @@ class Player
         $this->deck = $deck;
         $this->hand = $hand;
         $this->board = $board;
+        $this->graveyard = new Graveyard();
     }
 
     /**

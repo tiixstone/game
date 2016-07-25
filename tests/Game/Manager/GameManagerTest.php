@@ -19,10 +19,18 @@ class GameManagerTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $player1Hero = new Jaina();
-        $player2Hero = new Jaina();
-
-        $player1Deck = new Game\Card\Collection\Deck([
+        $this->game = Factory::createForTest([
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+            new Game\Card\Minion\Sheep(),
+        ], [
             new Game\Card\Minion\Sheep(),
             new Game\Card\Minion\Sheep(),
             new Game\Card\Minion\Sheep(),
@@ -34,38 +42,6 @@ class GameManagerTest extends \PHPUnit\Framework\TestCase
             new Game\Card\Minion\Sheep(),
             new Game\Card\Minion\Sheep(),
         ]);
-        $player1Hand = new Game\Card\Collection\Hand([]);
-        $player1Board = new Game\Card\Collection\Board([]);
-
-        $player2Deck = new Game\Card\Collection\Deck([
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-            new Game\Card\Minion\Sheep(),
-        ]);
-        $player2Hand = new Game\Card\Collection\Hand([]);
-        $player2Board = new Game\Card\Collection\Board([]);
-
-        $player1 = new \Tiixstone\Game\Player('Jonh Doe', $player1Hero, $player1Deck, $player1Hand, $player1Board);
-        $player2 = new \Tiixstone\Game\Player('Agent Smith', $player2Hero, $player2Deck, $player2Hand, $player2Board);
-
-        $eventDispatcher = new EventDispatcher();
-        $gameManager = new GameManager();
-        $cardsManager = new Game\Manager\CardsManager();
-        $boardManager = new BoardManager();
-
-        $this->game = new \Tiixstone\Game($player1, $player2, $eventDispatcher, $gameManager, $cardsManager, $boardManager);
-    }
-
-    public function testSimpleGamePlay()
-    {
-        $this->assertTrue(!$this->game->isOver());
     }
 
     public function testDrawingCardsAndFatigue()
@@ -131,17 +107,6 @@ class GameManagerTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(4, $this->game->player1->hand->count());
         $this->assertEquals(5, $this->game->player2->hand->count());
-    }
-
-    public function testMoveNumberIncrease()
-    {
-        $this->assertEquals(0, $this->game->moveNumber());
-
-        $this->game->action(new EndTurn());
-        $this->assertEquals(1, $this->game->moveNumber());
-
-        $this->game->action(new EndTurn());
-        $this->assertEquals(2, $this->game->moveNumber());
     }
 
     public function testCurrentPlayerChangedAfterEndTurn()

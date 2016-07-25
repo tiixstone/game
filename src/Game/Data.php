@@ -51,7 +51,7 @@ class Data
                 'health' => $player->hero->health(),
             ],
             'hand' => $this->handData($game, $player->hand, $game->isPlayerCurrent($player)),
-            'board' => $this->boardData($player->board, $game->isPlayerCurrent($player)),
+            'board' => $this->boardData($game, $player->board, $game->isPlayerCurrent($player)),
             'hand_count' => $player->hand->count(),
             'deck_count' => $player->deck->count(),
             'board_count' => $player->board->count(),
@@ -82,15 +82,15 @@ class Data
      * @param bool $isActive
      * @return array
      */
-    private function boardData(Game\Card\Collection\Board $board, bool $isActive) : array
+    private function boardData(Game $game, Game\Card\Collection\Board $board, bool $isActive) : array
     {
-        return array_map(function(Game\Card\Minion $minion) {
+        return array_map(function(Game\Card\Minion $minion) use($game) {
             return [
                 'name' => $this->naming->get($minion),
-                'defaultHealth' => $minion->health(),
-                'defaultAttackRate' => $minion->attackRate(),
-                'health' => $minion->health(),
-                'attackRate' => $minion->attackRate(),
+                'defaultHealth' => $minion->defaultHealth(),
+                'defaultAttackRate' => $minion->defaultAttackRate(),
+                'health' => $minion->health($game),
+                'attackRate' => $minion->attackRate($game),
             ];
         }, $board->all());
     }
@@ -108,16 +108,16 @@ class Data
                 'type' => $card->isMinion() ? 'minion' : 'spell',
             ];
 
-            $data['defaultCost'] = $card->cost();
-            $data['cost'] = $card->cost();
+            $data['defaultCost'] = $card->defaultCost();
+            $data['cost'] = $card->cost($game);
             $data['canBePlayed'] = ($isActive AND (new Game\Action\PlayCard($card->id()))->canBePlayed($game));
 
             if($card->isMinion()) {
                 /** @var $card Game\Card\Minion */
-                $data['defaultHealth'] = $card->health();
-                $data['defaultAttackRate'] = $card->attackRate();
-                $data['health'] = $card->health();
-                $data['attackRate'] = $card->attackRate();
+                $data['defaultHealth'] = $card->defaultHealth();
+                $data['defaultAttackRate'] = $card->defaultAttackRate();
+                $data['health'] = $card->health($game);
+                $data['attackRate'] = $card->attackRate($game);
             }
 
             return $data;

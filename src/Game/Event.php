@@ -10,6 +10,6 @@ namespace Tiixstone\Game;
  *
  * @package Tiixstone\Game
  */
-abstract class Event
+abstract class Event extends \Symfony\Component\EventDispatcher\Event
 {
 }

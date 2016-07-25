@@ -58,7 +58,7 @@ class CardsManager
     {
         $card = $this->getCardFromDeck($player);
 
-        if(!($card instanceof NullCard)) {
+        if($card instanceof Game\Card) {
             $this->appendToHand($player, $card);
         }
 
@@ -84,7 +84,7 @@ class CardsManager
      * @return Game\Card
      * @throws Game\Exception
      */
-    public function getCardFromDeck(Game\Player $player) : Game\Card
+    public function getCardFromDeck(Game\Player $player)
     {
         if($player->deck->count()) {
             return $player->deck->shift();
@@ -93,7 +93,7 @@ class CardsManager
         $player->hero->reduceHealth($player->fatigue());
         $player->incrementFatigue();
 
-        return new NullCard();
+        return false;
     }
 
     /**
@@ -132,22 +132,6 @@ class CardsManager
      */
     public function shuffleToDeck(Game\Player $player, Game\Card $card) : self
     {
-        return $this;
-    }
-
-    /**
-     * @param Game\Player $player
-     * @param Game\Card\Minion $card
-     * @return $this
-     */
-    public function placeCardOnBoard(Game\Player $player, Game\Card\Minion $card)
-    {
-        //if(!$player->board->hasVacantPlace()) {
-        //    throw new Game\Exception("There is no vacant place on board", Game\Exception::EXCEEDED_PLACES_ON_BOARD);
-        //}
-        
-        $player->board->append($card);
-
         return $this;
     }
 

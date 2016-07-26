@@ -5,9 +5,14 @@ namespace Tiixstone\Game;
 abstract class Hero
 {
     /**
-     * @var
+     * @var int
      */
-    protected $health = 30;
+    protected $health;
+
+    public function __construct()
+    {
+        $this->health = $this->maximumHealth();
+    }
 
     /**
      * @return bool
@@ -35,6 +40,21 @@ abstract class Hero
 
     /**
      * @param int $amount
+     * @return $this
+     */
+    public function addHealth(int $amount)
+    {
+        $this->health = $this->health + $amount;
+
+        if($this->health > $this->maximumHealth()) {
+            $this->health = $this->maximumHealth();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int $amount
      * @return Hero
      */
     public function reduceHealth(int $amount) : self
@@ -50,6 +70,10 @@ abstract class Hero
      */
     public function setHealth(int $amount) : self
     {
+        if($amount > $this->maximumHealth()) {
+            throw new Exception("Overheal");
+        }
+
         $this->health = $amount;
 
         return $this;

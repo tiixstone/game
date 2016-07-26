@@ -7,5 +7,5 @@ use Tiixstone\Game\Card\Collection;
 
 class Board extends Collection
 {
-
+    
 }

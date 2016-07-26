@@ -13,6 +13,78 @@ use Tiixstone\Game\Card\Minion\Sheep;
 
 class MinionAttacksMinionTest extends TestCase
 {
+    public function testHeroTakesDamage()
+    {
+        $game = Factory::createForTest(Factory::createCardsArray(30), Factory::createCardsArray(30));
+        $this->assertEquals(30, $game->idlePlayer()->hero->health());
+
+        $game->action(new Game\Action\PlayCard($game->currentPlayer()->hand->first()));
+        $game->action(new EndTurn());
+        $game->action(new EndTurn());
+
+        $game->action(new Game\Action\MinionAttacksHero($game->currentPlayer()->board->first()));
+        $this->assertEquals(29, $game->idlePlayer()->hero->health());
+    }
+
+    public function testAttackerCanNotAttackIfAttackRateIsZero()
+    {
+        $this->expectException(Game\Exception::class);
+        $this->expectExceptionCode(Game\Exception::MINION_CAN_NOT_ATTACK_ZERO_ATTACK_RATE);
+
+        $game = Factory::createForTest();
+
+        $card = new Sheep();
+        $game->boardManager->summonMinion($game->player1, $card);
+
+        $targetCard = new ChillwindYeti();
+        $targetCard->setAttackRate(0);
+        $game->boardManager->summonMinion($game->player2, $targetCard);
+
+        $game->action(new EndTurn());
+
+        $game->action(new MinionAttacksMinion($targetCard, $card));
+    }
+
+    public function testInvalidAttacker()
+    {
+        $this->expectException(Game\Exception::class);
+        $this->expectExceptionCode(Game\Exception::INVALID_CARD);
+
+        $game = Factory::createForTest();
+
+        $card = new Sheep();
+        $game->boardManager->summonMinion($game->player1, $card);
+
+        $targetCard = new ChillwindYeti();
+        $game->boardManager->summonMinion($game->player2, $targetCard);
+
+        $game->action(new EndTurn());
+
+        $invalidAttacker = new Sheep();
+
+        $game->action(new MinionAttacksMinion($invalidAttacker, $card));
+    }
+
+    public function testInvalidTarget()
+    {
+        $this->expectException(Game\Exception::class);
+        $this->expectExceptionCode(Game\Exception::INVALID_CARD);
+
+        $game = Factory::createForTest();
+
+        $sheep = new Sheep();
+        $game->boardManager->summonMinion($game->player1, $sheep);
+
+        $yeti = new ChillwindYeti();
+        $game->boardManager->summonMinion($game->player2, $yeti);
+
+        $game->action(new EndTurn());
+
+        $invalidTarget = new Sheep();
+
+        $game->action(new MinionAttacksMinion($yeti, $invalidTarget));
+    }
+
     public function testMinionsTakeDamage()
     {
         $game = Factory::createForTest();
@@ -26,7 +98,7 @@ class MinionAttacksMinionTest extends TestCase
         $game->action(new EndTurn());
         $game->action(new EndTurn());
 
-        $game->action(new MinionAttacksMinion($card->id(), $targetCard->id()));
+        $game->action(new MinionAttacksMinion($card, $targetCard));
 
         $this->assertEquals(4, $targetCard->health($game));
         $this->assertEquals(-3, $card->health($game));
@@ -48,7 +120,7 @@ class MinionAttacksMinionTest extends TestCase
         $targetCard = new ChillwindYeti();
         $game->boardManager->summonMinion($game->player2, $targetCard);
 
-        $game->action(new MinionAttacksMinion($card->id(), $targetCard->id()));
+        $game->action(new MinionAttacksMinion($card, $targetCard));
     }
 
     public function testMinionExhaustionAfterAttack()
@@ -68,7 +140,7 @@ class MinionAttacksMinionTest extends TestCase
 
         $game->action(new EndTurn());
 
-        $game->action(new MinionAttacksMinion($yeti->id(), $sheep1->id()));
-        $game->action(new MinionAttacksMinion($yeti->id(), $sheep2->id()));
+        $game->action(new MinionAttacksMinion($yeti, $sheep1));
+        $game->action(new MinionAttacksMinion($yeti, $sheep2));
     }
 }

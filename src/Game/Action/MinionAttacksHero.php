@@ -5,22 +5,16 @@ namespace Tiixstone\Game\Action;
 use Tiixstone\Game;
 use Tiixstone\Game\Action;
 
-class MinionAttacksMinion extends Action
+class MinionAttacksHero extends Action
 {
     /**
      * @var Game\Card\Minion
      */
     private $attacker;
 
-    /**
-     * @var Game\Card\Minion
-     */
-    private $target;
-
-    public function __construct(Game\Card\Minion $attacker, Game\Card\Minion $target)
+    public function __construct(Game\Card\Minion $attacker)
     {
         $this->attacker = $attacker;
-        $this->target = $target;
     }
 
     public function process(Game $game)
@@ -30,8 +24,7 @@ class MinionAttacksMinion extends Action
             throw $exception;
         }
 
-        $game->attackManager->minionTakeDamage($game, $this->target, $this->attacker->attackRate($game));
-        $game->attackManager->minionTakeDamage($game, $this->attacker, $this->target->attackRate($game));
+        $game->attackManager->heroTakeDamage($game, $game->idlePlayer()->hero, $this->attacker->attackRate($game));
 
         $this->attacker->setExhausted(true);
     }
@@ -44,14 +37,6 @@ class MinionAttacksMinion extends Action
     public function canAttack(Game $game, $throwException = false)
     {
         if(!$this->cardExists($game)) {
-            if($throwException) {
-                throw new Game\Exception("Card does not exist", Game\Exception::INVALID_CARD);
-            } else {
-                return false;
-            }
-        }
-
-        if(!$this->targetCardExists($game)) {
             if($throwException) {
                 throw new Game\Exception("Card does not exist", Game\Exception::INVALID_CARD);
             } else {
@@ -74,7 +59,7 @@ class MinionAttacksMinion extends Action
                 return false;
             }
         }
-        
+
         if(!$this->attacker->attackCondition($game)) {
             if($throwException) {
                 throw new Game\Exception("Minion can not attack. Conditions are not fulfilled");
@@ -93,15 +78,6 @@ class MinionAttacksMinion extends Action
     protected function attackRateGreaterThanZero(Game $game) : bool
     {
         return $this->attacker->attackRate($game) > 0;
-    }
-
-    /**
-     * @param Game $game
-     * @return bool
-     */
-    protected function targetCardExists(Game $game) : bool
-    {
-        return $game->idlePlayer()->board->has($this->target->id());
     }
 
     /**

@@ -48,7 +48,7 @@ class PlayCardTest extends TestCase
         $this->assertEquals(0, $this->game->currentPlayer()->board->count());
         $this->assertEquals(4, $this->game->currentPlayer()->hand->count());
 
-        $this->game->action(new Game\Action\PlayCard($this->game->currentPlayer()->hand->first()->id()));
+        $this->game->action(new Game\Action\PlayCard($this->game->currentPlayer()->hand->first()));
 
         $this->assertEquals(1, $this->game->currentPlayer()->board->count());
         $this->assertEquals(3, $this->game->currentPlayer()->hand->count());
@@ -59,7 +59,7 @@ class PlayCardTest extends TestCase
         $this->expectException(Game\Exception::class);
         $this->expectExceptionCode(Game\Exception::PLAYER_DOESNT_HAVE_CARD_IN_HAND_WITH_REQUIRED_KEY);
 
-        $this->game->action(new Game\Action\PlayCard('123'));
+        $this->game->action(new Game\Action\PlayCard(new Game\Card\Minion\Sheep()));
     }
 
     public function testPlayerDoenNotHaveEnoughManaToPlayCard()
@@ -68,9 +68,9 @@ class PlayCardTest extends TestCase
         $this->expectExceptionCode(Game\Exception::PLAYER_DOESNT_HAVE_ENOUGH_MANA_TO_PLAY_CARD);
         
         $card = $this->game->currentPlayer()->hand->first();
-        $this->game->action(new Game\Action\PlayCard($card->id()));
+        $this->game->action(new Game\Action\PlayCard($card));
 
         $card = $this->game->currentPlayer()->hand->first();
-        $this->game->action(new Game\Action\PlayCard($card->id()));
+        $this->game->action(new Game\Action\PlayCard($card));
     }
 }

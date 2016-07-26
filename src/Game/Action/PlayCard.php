@@ -11,11 +11,17 @@ class PlayCard extends Action
     /**
      * @var int
      */
-    private $id;
+    private $card;
 
-    public function __construct(string $id)
+    /**
+     * @var Game\Card
+     */
+    private $targetCard;
+
+    public function __construct(Game\Card $card, Game\Card $targetCard = null)
     {
-        $this->id = $id;
+        $this->card = $card;
+        $this->targetCard = $targetCard;
     }
 
     public function process(Game $game)
@@ -24,17 +30,17 @@ class PlayCard extends Action
             throw $exception;
         }
 
-        $card = $game->cardsManager->getCardFromHand($game->currentPlayer(), $this->id());
+        $game->gameManager->reducePlayerMana($game->currentPlayer(), $this->card->cost($game));
 
-        $game->gameManager->reducePlayerMana($game->currentPlayer(), $card->cost($game));
+        $game->currentPlayer()->hand->pull($this->card->id());
 
-        if($card instanceof Game\Card\Minion) {
-            $game->boardManager->placeCardOnBoard($game->currentPlayer(), $card);
+        if($this->card instanceof Game\Card\Minion) {
+            $game->boardManager->placeCardOnBoard($game->currentPlayer(), $this->card, $this->targetCard);
         }
 
-        $card->play($game);
+        $this->card->play($game);
 
-        $game->eventDispatcher->dispatch(CardPlayed::NAME, new CardPlayed($game->currentPlayer(), $card));
+        $game->eventDispatcher->dispatch(CardPlayed::NAME, new CardPlayed($game->currentPlayer(), $this->card));
     }
 
     /**
@@ -48,7 +54,7 @@ class PlayCard extends Action
         if(!$this->cardExists($game)) {
             if($throwException) {
                 return new Game\Exception(
-                    sprintf("Player does not have card with key [%s]", $this->id()),
+                    sprintf("Player does not have card with key [%s]", $this->card->id()),
                     Game\Exception::PLAYER_DOESNT_HAVE_CARD_IN_HAND_WITH_REQUIRED_KEY
                 );
             } else {
@@ -56,9 +62,7 @@ class PlayCard extends Action
             }
         }
 
-        $card = $game->currentPlayer()->hand->get($this->id());
-
-        if(!$this->playerHasEnoughMana($game, $card)) {
+        if(!$this->playerHasEnoughMana($game)) {
             if($throwException) {
                 return new Game\Exception(
                     sprintf("Player does not have enough mana"),
@@ -70,7 +74,7 @@ class PlayCard extends Action
 
         }
 
-        if($card->isMinion() AND !$this->vacantPlaceOnBoard($game)) {
+        if($this->card->isMinion() AND !$this->vacantPlaceOnBoard($game)) {
             if($throwException) {
                 return new Game\Exception("There is no vacant place on board", Game\Exception::EXCEEDED_PLACES_ON_BOARD);
             } else {
@@ -82,20 +86,12 @@ class PlayCard extends Action
     }
 
     /**
-     * @return string
-     */
-    public function id() : string
-    {
-        return $this->id;
-    }
-
-    /**
      * @param Game $game
      * @return bool
      */
     private function cardExists(Game $game)
     {
-        return $game->currentPlayer()->hand->has($this->id());
+        return $game->currentPlayer()->hand->has($this->card->id());
     }
 
     /**
@@ -103,9 +99,9 @@ class PlayCard extends Action
      * @param Game\Card $card
      * @return bool
      */
-    private function playerHasEnoughMana(Game $game, Game\Card $card)
+    private function playerHasEnoughMana(Game $game)
     {
-        return $game->currentPlayer()->availableMana() >= $card->cost($game);
+        return $game->currentPlayer()->availableMana() >= $this->card->cost($game);
     }
 
     /**

@@ -67,7 +67,7 @@ class Data
     {
         // если у карты есть возможность ходить
         foreach($player->hand->all() as $card) {
-            if((new Game\Action\PlayCard($card->id()))->canBePlayed($game)) {
+            if((new Game\Action\PlayCard($card))->canBePlayed($game)) {
                 return true;
             }
         }
@@ -84,13 +84,30 @@ class Data
      */
     private function boardData(Game $game, Game\Card\Collection\Board $board, bool $isActive) : array
     {
-        return array_map(function(Game\Card\Minion $minion) use($game) {
+        return array_map(function(Game\Card\Minion $minion) use($game, $isActive) {
+
+            if($isActive) {
+                $canAttack = false;
+
+                foreach($game->idlePlayer()->board->all() as $enemyMinion) {
+                    if((new Game\Action\MinionAttacksMinion($minion, $enemyMinion))->canAttack($game)) {
+                        $canAttack = true;
+                        break;
+                    }
+                }
+
+                $canAttack = (new Game\Action\MinionAttacksHero($minion))->canAttack($game);
+            } else {
+                $canAttack = false;
+            }
+
             return [
                 'name' => $this->naming->get($minion),
                 'defaultHealth' => $minion->defaultHealth(),
                 'defaultAttackRate' => $minion->defaultAttackRate(),
                 'health' => $minion->health($game),
                 'attackRate' => $minion->attackRate($game),
+                'canAttack' => $canAttack,
             ];
         }, $board->all());
     }
@@ -110,7 +127,7 @@ class Data
 
             $data['defaultCost'] = $card->defaultCost();
             $data['cost'] = $card->cost($game);
-            $data['canBePlayed'] = ($isActive AND (new Game\Action\PlayCard($card->id()))->canBePlayed($game));
+            $data['canBePlayed'] = ($isActive AND (new Game\Action\PlayCard($card))->canBePlayed($game));
 
             if($card->isMinion()) {
                 /** @var $card Game\Card\Minion */

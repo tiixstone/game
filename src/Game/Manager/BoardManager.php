@@ -28,15 +28,25 @@ class BoardManager
     /**
      * @param Game\Player $player
      * @param Game\Card\Minion $card
+     * @param Game\Card\Minion|null $rightMinion
      * @return $this
+     * @throws Game\Exception
      */
-    public function placeCardOnBoard(Game\Player $player, Game\Card\Minion $card)
+    public function placeCardOnBoard(Game\Player $player, Game\Card\Minion $card, Game\Card\Minion $rightMinion = null)
     {
         if(!$this->hasVacantPlace($player)) {
             throw new Game\Exception("There is no vacant place on board", Game\Exception::EXCEEDED_PLACES_ON_BOARD);
         }
 
-        $player->board->append($card);
+        // Существо ставится на поле относительно другого существа,
+        // которое находится справа
+        // Если поле не пустое и не указано существо, значит
+        // существо надо поставить в крайнюю правую позицию
+        if($player->board->isEmpty() OR !$rightMinion) {
+            $player->board->append($card);
+        } else {
+           $player->board->addBefore($card, $rightMinion->id());
+        }
 
         return $this;
     }

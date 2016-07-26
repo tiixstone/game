@@ -25,6 +25,44 @@ abstract class Collection
     }
 
     /**
+     * Добавляет карту перед другой картой
+     *
+     * @param Card $card
+     * @param string $id
+     * @return $this
+     * @throws Exception
+     */
+    public function addBefore(Card $card, string $id)
+    {
+        $targetCard = $this->get($id);
+
+        $position = 0;
+        foreach($this->all() as $item) {
+            if($item->id() == $targetCard->id()) {
+                break;
+            }
+
+            $position++;
+        }
+
+        $this->cards = array_merge(
+            array_slice($this->cards, 0, $position),
+            [$card],
+            array_slice($this->cards, $position)
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return !$this->count();
+    }
+
+    /**
      * @return int
      */
     public function count()
@@ -57,6 +95,25 @@ abstract class Collection
     }
 
     /**
+     * @param int $position
+     * @return Card
+     * @throws Exception
+     */
+    public function getByPosition(int $position) : Card
+    {
+        $i=1;
+        foreach($this->all() as $card) {
+            if($position == $i) {
+                return $card;
+            }
+
+            $i++;
+        }
+
+        throw new Exception(sprintf("Card with position [%s] does not exist", $position));
+    }
+
+    /**
      * @return Card
      */
     public function shift() : Card
@@ -73,7 +130,23 @@ abstract class Collection
      */
     public function first() : Card
     {
-        return array_values($this->cards)[0];
+        if(!$this->count()) {
+            throw new Exception("Collection is empty");
+        }
+
+        return reset($this->cards);
+    }
+
+    /**
+     * @return Card
+     */
+    public function last() : Card
+    {
+        if(!$this->count()) {
+            throw new Exception("Collection is empty");
+        }
+
+        return end($this->cards);
     }
 
     /**

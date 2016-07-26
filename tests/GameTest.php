@@ -51,13 +51,13 @@ class GameTest extends TestCase
 
         $this->assertTrue(is_object($coin));
 
-        $game->action(new PlayCard($card->id()));
+        $game->action(new PlayCard($coin));
 
         $this->checkPlayer($game->currentPlayer(), 5, 25, 0, 0, 2, 1);
 
         // выставляем двух овец
-        $game->action(new PlayCard($game->currentPlayer()->hand->first()->id()));
-        $game->action(new PlayCard($game->currentPlayer()->hand->first()->id()));
+        $game->action(new PlayCard($game->currentPlayer()->hand->first()));
+        $game->action(new PlayCard($game->currentPlayer()->hand->first()));
 
         $this->checkPlayer($game->currentPlayer(), 3, 25, 2, 0, 0, 1);
 
@@ -70,8 +70,8 @@ class GameTest extends TestCase
         $this->checkPlayer($game->player2, 3, 25, 2, 0, 0, 1);
 
         // выставляем двух овец
-        $game->action(new PlayCard($game->currentPlayer()->hand->first()->id()));
-        $game->action(new PlayCard($game->currentPlayer()->hand->first()->id()));
+        $game->action(new PlayCard($game->currentPlayer()->hand->first()));
+        $game->action(new PlayCard($game->currentPlayer()->hand->first()));
 
         $this->checkPlayer($game->player1, 3, 25, 2, 0, 0, 2);
 
@@ -86,7 +86,7 @@ class GameTest extends TestCase
         // атакуем овцами
         $minionAttacker1 = $game->player2->board->first();
         $minionTarget1 = $game->player1->board->first();
-        $game->action(new Game\Action\MinionAttacksMinion($minionAttacker1->id(), $minionTarget1->id()));
+        $game->action(new Game\Action\MinionAttacksMinion($minionAttacker1, $minionTarget1));
 
         $this->checkPlayer($game->player1, 3, 25, 1, 1, 0, 2);
         $this->checkPlayer($game->player2, 4, 24, 1, 1, 2, 2);

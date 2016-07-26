@@ -30,6 +30,11 @@ class MinionAttacksMinion extends Action
             throw $exception;
         }
 
+        $game->eventDispatcher->dispatch(
+            Game\Event\MinionAttackedMinion::NAME,
+            new Game\Event\MinionAttackedMinion($this->attacker, $this->target)
+        );
+
         $game->attackManager->minionTakeDamage($game, $this->target, $this->attacker->attackRate($game));
         $game->attackManager->minionTakeDamage($game, $this->attacker, $this->target->attackRate($game));
 

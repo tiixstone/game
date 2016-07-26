@@ -125,8 +125,6 @@ class Game
 
         $this->gameManager->afterAction($this);
 
-        
-
         if($this->isOver()) {
             $this->status = self::STATUS_OVER;
         }

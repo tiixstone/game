@@ -124,178 +124,178 @@ class GameManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->game->player2, $this->game->currentPlayer());
     }
 
-    public function testManaCrystalsIncrease()
+    public function testMaximumManaIncrease()
     {
-        $this->assertEquals(1, $this->game->player1->manaCrystals());
-        $this->assertEquals(0, $this->game->player2->manaCrystals());
+        $this->assertEquals(1, $this->game->player1->maximumMana());
+        $this->assertEquals(0, $this->game->player2->maximumMana());
 
         $this->assertEquals(1, $this->game->player1->availableMana());
         $this->assertEquals(0, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(1, $this->game->player1->manaCrystals());
-        $this->assertEquals(1, $this->game->player2->manaCrystals());
+        $this->assertEquals(1, $this->game->player1->maximumMana());
+        $this->assertEquals(1, $this->game->player2->maximumMana());
 
         $this->assertEquals(1, $this->game->player1->availableMana());
         $this->assertEquals(1, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(2, $this->game->player1->manaCrystals());
-        $this->assertEquals(1, $this->game->player2->manaCrystals());
+        $this->assertEquals(2, $this->game->player1->maximumMana());
+        $this->assertEquals(1, $this->game->player2->maximumMana());
 
         $this->assertEquals(2, $this->game->player1->availableMana());
         $this->assertEquals(1, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(2, $this->game->player1->manaCrystals());
-        $this->assertEquals(2, $this->game->player2->manaCrystals());
+        $this->assertEquals(2, $this->game->player1->maximumMana());
+        $this->assertEquals(2, $this->game->player2->maximumMana());
 
         $this->assertEquals(2, $this->game->player1->availableMana());
         $this->assertEquals(2, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(3, $this->game->player1->manaCrystals());
-        $this->assertEquals(2, $this->game->player2->manaCrystals());
+        $this->assertEquals(3, $this->game->player1->maximumMana());
+        $this->assertEquals(2, $this->game->player2->maximumMana());
 
         $this->assertEquals(3, $this->game->player1->availableMana());
         $this->assertEquals(2, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(3, $this->game->player1->manaCrystals());
-        $this->assertEquals(3, $this->game->player2->manaCrystals());
+        $this->assertEquals(3, $this->game->player1->maximumMana());
+        $this->assertEquals(3, $this->game->player2->maximumMana());
 
         $this->assertEquals(3, $this->game->player1->availableMana());
         $this->assertEquals(3, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(4, $this->game->player1->manaCrystals());
-        $this->assertEquals(3, $this->game->player2->manaCrystals());
+        $this->assertEquals(4, $this->game->player1->maximumMana());
+        $this->assertEquals(3, $this->game->player2->maximumMana());
 
         $this->assertEquals(4, $this->game->player1->availableMana());
         $this->assertEquals(3, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(4, $this->game->player1->manaCrystals());
-        $this->assertEquals(4, $this->game->player2->manaCrystals());
+        $this->assertEquals(4, $this->game->player1->maximumMana());
+        $this->assertEquals(4, $this->game->player2->maximumMana());
 
         $this->assertEquals(4, $this->game->player1->availableMana());
         $this->assertEquals(4, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(5, $this->game->player1->manaCrystals());
-        $this->assertEquals(4, $this->game->player2->manaCrystals());
+        $this->assertEquals(5, $this->game->player1->maximumMana());
+        $this->assertEquals(4, $this->game->player2->maximumMana());
 
         $this->assertEquals(5, $this->game->player1->availableMana());
         $this->assertEquals(4, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(5, $this->game->player1->manaCrystals());
-        $this->assertEquals(5, $this->game->player2->manaCrystals());
+        $this->assertEquals(5, $this->game->player1->maximumMana());
+        $this->assertEquals(5, $this->game->player2->maximumMana());
 
         $this->assertEquals(5, $this->game->player1->availableMana());
         $this->assertEquals(5, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(6, $this->game->player1->manaCrystals());
-        $this->assertEquals(5, $this->game->player2->manaCrystals());
+        $this->assertEquals(6, $this->game->player1->maximumMana());
+        $this->assertEquals(5, $this->game->player2->maximumMana());
 
         $this->assertEquals(6, $this->game->player1->availableMana());
         $this->assertEquals(5, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(6, $this->game->player1->manaCrystals());
-        $this->assertEquals(6, $this->game->player2->manaCrystals());
+        $this->assertEquals(6, $this->game->player1->maximumMana());
+        $this->assertEquals(6, $this->game->player2->maximumMana());
 
         $this->assertEquals(6, $this->game->player1->availableMana());
         $this->assertEquals(6, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(7, $this->game->player1->manaCrystals());
-        $this->assertEquals(6, $this->game->player2->manaCrystals());
+        $this->assertEquals(7, $this->game->player1->maximumMana());
+        $this->assertEquals(6, $this->game->player2->maximumMana());
 
         $this->assertEquals(7, $this->game->player1->availableMana());
         $this->assertEquals(6, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(7, $this->game->player1->manaCrystals());
-        $this->assertEquals(7, $this->game->player2->manaCrystals());
+        $this->assertEquals(7, $this->game->player1->maximumMana());
+        $this->assertEquals(7, $this->game->player2->maximumMana());
 
         $this->assertEquals(7, $this->game->player1->availableMana());
         $this->assertEquals(7, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(8, $this->game->player1->manaCrystals());
-        $this->assertEquals(7, $this->game->player2->manaCrystals());
+        $this->assertEquals(8, $this->game->player1->maximumMana());
+        $this->assertEquals(7, $this->game->player2->maximumMana());
 
         $this->assertEquals(8, $this->game->player1->availableMana());
         $this->assertEquals(7, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(8, $this->game->player1->manaCrystals());
-        $this->assertEquals(8, $this->game->player2->manaCrystals());
+        $this->assertEquals(8, $this->game->player1->maximumMana());
+        $this->assertEquals(8, $this->game->player2->maximumMana());
 
         $this->assertEquals(8, $this->game->player1->availableMana());
         $this->assertEquals(8, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(9, $this->game->player1->manaCrystals());
-        $this->assertEquals(8, $this->game->player2->manaCrystals());
+        $this->assertEquals(9, $this->game->player1->maximumMana());
+        $this->assertEquals(8, $this->game->player2->maximumMana());
 
         $this->assertEquals(9, $this->game->player1->availableMana());
         $this->assertEquals(8, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(9, $this->game->player1->manaCrystals());
-        $this->assertEquals(9, $this->game->player2->manaCrystals());
+        $this->assertEquals(9, $this->game->player1->maximumMana());
+        $this->assertEquals(9, $this->game->player2->maximumMana());
 
         $this->assertEquals(9, $this->game->player1->availableMana());
         $this->assertEquals(9, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(10, $this->game->player1->manaCrystals());
-        $this->assertEquals(9, $this->game->player2->manaCrystals());
+        $this->assertEquals(10, $this->game->player1->maximumMana());
+        $this->assertEquals(9, $this->game->player2->maximumMana());
 
         $this->assertEquals(10, $this->game->player1->availableMana());
         $this->assertEquals(9, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(10, $this->game->player1->manaCrystals());
-        $this->assertEquals(10, $this->game->player2->manaCrystals());
+        $this->assertEquals(10, $this->game->player1->maximumMana());
+        $this->assertEquals(10, $this->game->player2->maximumMana());
 
         $this->assertEquals(10, $this->game->player1->availableMana());
         $this->assertEquals(10, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(10, $this->game->player1->manaCrystals());
-        $this->assertEquals(10, $this->game->player2->manaCrystals());
+        $this->assertEquals(10, $this->game->player1->maximumMana());
+        $this->assertEquals(10, $this->game->player2->maximumMana());
 
         $this->assertEquals(10, $this->game->player1->availableMana());
         $this->assertEquals(10, $this->game->player2->availableMana());
 
         $this->game->action(new EndTurn());
 
-        $this->assertEquals(10, $this->game->player1->manaCrystals());
-        $this->assertEquals(10, $this->game->player2->manaCrystals());
+        $this->assertEquals(10, $this->game->player1->maximumMana());
+        $this->assertEquals(10, $this->game->player2->maximumMana());
 
         $this->assertEquals(10, $this->game->player1->availableMana());
         $this->assertEquals(10, $this->game->player2->availableMana());

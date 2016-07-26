@@ -17,7 +17,7 @@ class GameManager
     /**
      * @var int
      */
-    protected $maxManaCrystals = 10;
+    protected $playerMaximumManaLimit = 10;
 
     public function start(Game $game)
     {
@@ -53,9 +53,8 @@ class GameManager
             Game\Event\TurnBegan::NAME, new Game\Event\TurnBegan($game->currentPlayer(), $game->turnNumber())
         );
 
-        $this->incrementPlayerManaCrystals($game->currentPlayer());
-
-        $game->currentPlayer()->setAvailableMana($game->currentPlayer()->manaCrystals());
+        $this->addPlayerMaximumMana($game, $game->currentPlayer(), 1);
+        $this->setPlayerAvailableMana($game, $game->currentPlayer(), $game->currentPlayer()->maximumMana());
 
         $game->cardsManager->draw($game->currentPlayer());
 
@@ -112,50 +111,102 @@ class GameManager
     }
 
     /**
-     * @param Game\Player $player
-     * @param int $amount
-     * @return $this
-     */
-    public function incrementPlayerMana(Game\Player $player, int $amount = 1)
-    {
-        if($player->availableMana() < $this->maxManaCrystals()) {
-            $player->setAvailableMana($player->availableMana() + $amount);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Game\Player $player
-     * @return GameManager
-     */
-    public function incrementPlayerManaCrystals(Game\Player $player) : self
-    {
-        if($player->manaCrystals() < $this->maxManaCrystals()) {
-            $player->incrementManaCrystals();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Game $game
+     * @param Player $player
      * @param int $amount
      * @return $this
      * @throws Game\Exception
      */
-    public function reducePlayerMana(Game\Player $player, int $amount) : self
+    public function setPlayerAvailableMana(Game $game, Player $player, int $amount)
     {
-        if($player->availableMana() < $amount) {
-            throw new Game\Exception(
-                sprintf("Player does not have enough mana"),
-                Game\Exception::PLAYER_DOESNT_HAVE_ENOUGH_MANA_TO_PLAY_CARD
-            );
+        if($amount < 0) {
+            throw new Game\Exception("Available mana must be zero or greater than zero");
         }
 
-        $player->reduceAvailableMana($amount);
+        if($amount > $this->playerMaximumManaLimit()) {
+            $amount = $this->playerMaximumManaLimit();
+        }
+
+        $gainedAvailableMana = $amount - $player->availableMana();
+
+        $player->setAvailableMana($amount);
+
+        $game->eventDispatcher->dispatch(Game\Event\PlayerGainedMana::NAME, new Game\Event\PlayerGainedMana($player, 0, $gainedAvailableMana));
 
         return $this;
+    }
+
+    /**
+     * @param Player $player
+     * @param int $amount
+     * @return GameManager
+     * @throws Game\Exception
+     */
+    public function addPlayerAvailableMana(Game $game, Player $player, int $amount)
+    {
+        return $this->setPlayerAvailableMana($game, $player, $player->availableMana() + $amount);
+    }
+
+    /**
+     * @param Player $player
+     * @param int $amount
+     * @return GameManager
+     * @throws Game\Exception
+     */
+    public function reducePlayerAvailableMana(Game $game, Player $player, int $amount)
+    {
+        return $this->setPlayerAvailableMana($game, $player, $player->availableMana() - $amount);
+    }
+
+    /**
+     * @param Player $player
+     * @param int $maximumMana
+     * @return $this
+     */
+    public function setPlayerMaximumMana(Game $game, Player $player, int $maximumMana)
+    {
+        if($maximumMana < 0) {
+            throw new Game\Exception("Maximum mana must be zero or greater than zero");
+        }
+
+        if($maximumMana > $this->playerMaximumManaLimit()) {
+            $maximumMana = $this->playerMaximumManaLimit();
+        }
+
+        $gainedMaximumMana = $maximumMana - $player->maximumMana();
+
+        $player->setMaximumMana($maximumMana);
+
+        $game->eventDispatcher->dispatch(Game\Event\PlayerGainedMana::NAME, new Game\Event\PlayerGainedMana($player, $gainedMaximumMana, 0));
+
+        return $this;
+    }
+
+    /**
+     * @param Player $player
+     * @param int $amount
+     * @return GameManager
+     */
+    public function addPlayerMaximumMana(Game $game, Player $player, int $amount)
+    {
+        return $this->setPlayerMaximumMana($game, $player, $player->maximumMana() + $amount);
+    }
+
+    /**
+     * @param Player $player
+     * @param int $amount
+     * @return GameManager
+     */
+    public function reducePlayerMaximumMana(Game $game, Player $player, int $amount)
+    {
+        return $this->setPlayerMaximumMana($game, $player, $player->maximumMana() - $amount);
+    }
+
+    /**
+     * @return int
+     */
+    public function playerMaximumManaLimit() : int
+    {
+        return $this->playerMaximumManaLimit;
     }
 
     /**
@@ -168,23 +219,11 @@ class GameManager
             /** @var Minion $minion */
             foreach ($player->board->all() as $minion) {
                 if ($minion->isDead($game)) {
-                    $card = $player->board->pull($minion->id());
-
-                    $card->reset();
-
-                    $player->graveyard->append($card);
+                    $game->attackManager->destroyMinion($game, $player, $minion);
                 }
             }
         }
 
         return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function maxManaCrystals() : int
-    {
-        return $this->maxManaCrystals;
     }
 }

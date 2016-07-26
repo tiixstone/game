@@ -30,7 +30,7 @@ class PlayCard extends Action
             throw $exception;
         }
 
-        $game->gameManager->reducePlayerMana($game->currentPlayer(), $this->card->cost($game));
+        $game->gameManager->reducePlayerAvailableMana($game, $game->currentPlayer(), $this->card->cost($game));
 
         $game->currentPlayer()->hand->pull($this->card->id());
 

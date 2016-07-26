@@ -13,15 +13,31 @@ class TheCoinTest extends TestCase
         $game = Factory::createForTest();
         $game->start();
 
+        $this->assertEquals(1, $game->currentPlayer()->maximumMana());
         $this->assertEquals(1, $game->currentPlayer()->availableMana());
-        $this->assertEquals(1, $game->currentPlayer()->manaCrystals());
 
         $theCoin = new Game\Card\Spell\TheCoin();
         $game->currentPlayer()->hand->append($theCoin);
 
         $game->action(new Game\Action\PlayCard($theCoin));
 
+        $this->assertEquals(1, $game->currentPlayer()->maximumMana());
         $this->assertEquals(2, $game->currentPlayer()->availableMana());
-        $this->assertEquals(1, $game->currentPlayer()->manaCrystals());
-    }    
+
+        $game->action(new Game\Action\EndTurn());
+
+        $this->assertEquals(1, $game->idlePlayer()->maximumMana());
+        $this->assertEquals(2, $game->idlePlayer()->availableMana());
+
+        $game->action(new Game\Action\EndTurn());
+
+        $this->assertEquals(2, $game->currentPlayer()->maximumMana());
+        $this->assertEquals(2, $game->currentPlayer()->availableMana());
+
+        $game->action(new Game\Action\EndTurn());
+        $game->action(new Game\Action\EndTurn());
+
+        $this->assertEquals(3, $game->currentPlayer()->maximumMana());
+        $this->assertEquals(3, $game->currentPlayer()->availableMana());
+    }
 }

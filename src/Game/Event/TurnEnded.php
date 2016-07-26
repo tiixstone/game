@@ -2,6 +2,7 @@
 
 namespace Tiixstone\Game\Event;
 
+use Tiixstone\Game;
 use Tiixstone\Game\Event;
 use Tiixstone\Game\Player;
 

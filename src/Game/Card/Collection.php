@@ -181,9 +181,20 @@ abstract class Collection
     {
         $card = $this->get($key);
 
-        unset($this->cards[$key]);
+        $this->remove($key);
 
         return $card;
+    }
+
+    /**
+     * @param string $key
+     * @return $this
+     */
+    public function remove(string $key)
+    {
+        unset($this->cards[$key]);
+
+        return $this;
     }
 
     /**

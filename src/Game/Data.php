@@ -43,7 +43,7 @@ class Data
             'isActive' => $game->isPlayerCurrent($player),
             'name' => $player->name(),
             'mana' => [
-                'crystals' => $player->manaCrystals(),
+                'maximum' => $player->maximumMana(),
                 'available' => $player->availableMana(),
             ],
             'hero' => [

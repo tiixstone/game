@@ -109,7 +109,7 @@ class GameTest extends TestCase
         $this->assertEquals($moveNumber, $game->turnNumber());
     }
 
-    private function checkPlayer(Game\Player $player, $handCount, $deckCount, $boardCount, $graveyardCount, $manaAvailable, $manaCrystals)
+    private function checkPlayer(Game\Player $player, $handCount, $deckCount, $boardCount, $graveyardCount, $manaAvailable, $maximumMana)
     {
         $this->assertEquals($handCount, $player->hand->count());
         $this->assertEquals($deckCount, $player->deck->count());
@@ -117,7 +117,7 @@ class GameTest extends TestCase
         $this->assertEquals($graveyardCount, $player->graveyard->count());
 
         $this->assertEquals($manaAvailable, $player->availableMana());
-        $this->assertEquals($manaCrystals, $player->manaCrystals());
+        $this->assertEquals($maximumMana, $player->maximumMana());
     }
 
     private function checkHero(Game\Hero $hero, $health)

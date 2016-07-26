@@ -27,7 +27,7 @@ class Player
     /**
      * @var int
      */
-    protected $manaCrystals = 0;
+    protected $maximumMana = 0;
 
     /**
      * @var string
@@ -132,18 +132,18 @@ class Player
     /**
      * @return int
      */
-    public function manaCrystals() : int
+    public function maximumMana() : int
     {
-        return $this->manaCrystals;
+        return $this->maximumMana;
     }
 
     /**
-     * @param int $manaCrystals
+     * @param int $maximumMana
      * @return Player
      */
-    public function setManaCrystals(int $manaCrystals) : self
+    public function setMaximumMana(int $maximumMana) : self
     {
-        $this->manaCrystals = $manaCrystals;
+        $this->maximumMana = $maximumMana;
 
         return $this;
     }
@@ -151,9 +151,9 @@ class Player
     /**
      * @return Player
      */
-    public function incrementManaCrystals() : self
+    public function incrementMaximumMana() : self
     {
-        $this->setManaCrystals($this->manaCrystals + 1);
+        $this->setMaximumMana($this->maximumMana + 1);
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace Tiixstone\Game\Card\Spell;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Tiixstone\Game;
 use Tiixstone\Game\Card\Spell;
 
@@ -27,7 +28,7 @@ class TheCoin extends Spell
      */
     public function cast(Game $game)
     {
-        $game->gameManager->incrementPlayerMana($game->currentPlayer());
+        $game->gameManager->addPlayerAvailableMana($game, $game->currentPlayer(), 1);
 
         return $this;
     }

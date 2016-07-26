@@ -12,6 +12,7 @@ class MinionTest extends TestCase
     public function testStats()
     {
         $game = Factory::createForTest();
+        $game->start();
 
         $minion = new GenericMinion();
 
@@ -23,6 +24,7 @@ class MinionTest extends TestCase
     public function testSpecialStats()
     {
         $game = Factory::createForTest();
+        $game->start();
 
         $minion = new SpecialMinion();
 
@@ -43,6 +45,7 @@ class MinionTest extends TestCase
     public function testDead()
     {
         $game = Factory::createForTest();
+        $game->start();
 
         $minion = new GenericMinion();
         $this->assertFalse($minion->isDead($game));

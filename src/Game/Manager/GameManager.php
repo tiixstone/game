@@ -3,6 +3,9 @@
 namespace Tiixstone\Game\Manager;
 
 use Tiixstone\Game;
+use Tiixstone\Game\Card\Minion;
+use Tiixstone\Game\Event\GameStarted;
+use Tiixstone\Game\Player;
 
 /**
  * Class GameManager
@@ -16,20 +19,40 @@ class GameManager
      */
     protected $maxManaCrystals = 10;
 
-    /**
-     * @return int
-     */
-    public function maxManaCrystals() : int
+    public function start(Game $game)
     {
-        return $this->maxManaCrystals;
+        $game->eventDispatcher->dispatch(GameStarted::NAME, new GameStarted($game->currentPlayer(), $game->idlePlayer()));
+
+        $this->shufflePlayersDeck($game);
+
+        $this->drawCardsForPlayers($game);
+
+        $this->beginTurn($game);
+
+        return $this;
+    }
+
+    /**
+     * @param Game $game
+     * @return $this
+     */
+    public function afterAction(Game $game)
+    {
+        $this->sendDeadMinionsToGraveyard($game);
+
+        return $this;
     }
 
     /**
      * @param Game $game
      * @return GameManager
      */
-    public function beginTurn(Game $game) : self
+    public function beginTurn(Game $game)
     {
+        $game->eventDispatcher->dispatch(
+            Game\Event\TurnBegan::NAME, new Game\Event\TurnBegan($game->currentPlayer(), $game->turnNumber())
+        );
+
         $this->incrementPlayerManaCrystals($game->currentPlayer());
 
         $game->currentPlayer()->setAvailableMana($game->currentPlayer()->manaCrystals());
@@ -41,6 +64,43 @@ class GameManager
         return $this;
     }
 
+    /**
+     * @param Game $game
+     * @return GameManager
+     */
+    public function endTurn(Game $game) : self
+    {
+        $game->eventDispatcher->dispatch(
+            Game\Event\TurnEnded::NAME, new Game\Event\TurnEnded($game->currentPlayer(), $game->turnNumber())
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function shufflePlayersDeck(Game $game)
+    {
+        $game->cardsManager->shuffleDeck($game->currentPlayer());
+        $game->cardsManager->shuffleDeck($game->idlePlayer());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function drawCardsForPlayers(Game $game)
+    {
+        $game->cardsManager->drawMany($game->currentPlayer(), 3);
+        $game->cardsManager->drawMany($game->idlePlayer(), 4);
+
+        $game->cardsManager->appendToHand($game->idlePlayer(), new Game\Card\Spell\TheCoin());
+
+        return $this;
+    }
+
     private function removeMinionsExhaustion(Game $game)
     {
         /** @var Game\Card\Minion $minion */
@@ -48,15 +108,6 @@ class GameManager
             $minion->setExhausted(false);
         }
 
-        return $this;
-    }
-
-    /**
-     * @param Game $game
-     * @return GameManager
-     */
-    public function endTurn(Game $game) : self
-    {
         return $this;
     }
 
@@ -105,5 +156,35 @@ class GameManager
         $player->reduceAvailableMana($amount);
 
         return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function sendDeadMinionsToGraveyard(Game $game)
+    {
+        /** @var Player $player */
+        foreach([$game->currentPlayer(), $game->idlePlayer()] as $player) {
+            /** @var Minion $minion */
+            foreach ($player->board->all() as $minion) {
+                if ($minion->isDead($game)) {
+                    $card = $player->board->pull($minion->id());
+
+                    $card->reset();
+
+                    $player->graveyard->append($card);
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function maxManaCrystals() : int
+    {
+        return $this->maxManaCrystals;
     }
 }

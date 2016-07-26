@@ -12,6 +12,7 @@ class AttackManagerTest extends TestCase
     public function testMinionTakesDamage()
     {
         $game = Factory::createForTest();
+        $game->start();
 
         $minion = new ChillwindYeti();
         $game->boardManager->summonMinion($game->player1, $minion);
@@ -27,6 +28,7 @@ class AttackManagerTest extends TestCase
     public function testHeroTakeDamage()
     {
         $game = Factory::createForTest([new Sheep(), new Sheep(), new Sheep(), new Sheep(), new Sheep()]);
+        $game->start();
         $this->assertEquals(30, $game->currentPlayer()->hero->health());
 
         $game->attackManager->heroTakeDamage($game, $game->currentPlayer()->hero, 10);

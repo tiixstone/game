@@ -42,6 +42,7 @@ class GameManagerTest extends \PHPUnit\Framework\TestCase
             new Game\Card\Minion\Sheep(),
             new Game\Card\Minion\Sheep(),
         ]);
+        $this->game->start();
     }
 
     public function testDrawingCardsAndFatigue()

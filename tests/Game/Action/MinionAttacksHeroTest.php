@@ -20,6 +20,7 @@ class MinionAttacksHeroTest extends TestCase
         $this->expectExceptionCode(Game\Exception::MINION_CAN_NOT_ATTACK_ZERO_ATTACK_RATE);
 
         $game = Factory::createForTest();
+        $game->start();
 
         $card = new Sheep();
         $game->boardManager->summonMinion($game->player1, $card);
@@ -39,6 +40,7 @@ class MinionAttacksHeroTest extends TestCase
         $this->expectExceptionCode(Game\Exception::INVALID_CARD);
 
         $game = Factory::createForTest();
+        $game->start();
 
         $card = new Sheep();
         $game->boardManager->summonMinion($game->player1, $card);
@@ -59,6 +61,7 @@ class MinionAttacksHeroTest extends TestCase
         $this->expectExceptionCode(Game\Exception::MINION_EXHAUSTED_CANT_ATTACK);
 
         $game = Factory::createForTest();
+        $game->start();
 
         $card = new Sheep();
         $game->boardManager->summonMinion($game->player1, $card);
@@ -75,6 +78,7 @@ class MinionAttacksHeroTest extends TestCase
         $this->expectExceptionCode(Game\Exception::MINION_EXHAUSTED_CANT_ATTACK);
 
         $game = Factory::createForTest();
+        $game->start();
 
         $yeti = new ChillwindYeti();
         $game->boardManager->summonMinion($game->player2, $yeti);

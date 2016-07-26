@@ -14,6 +14,7 @@ class BoardManagerTest extends TestCase
     public function testPlaceCardOnBoard()
     {
         $game = Factory::createForTest(Factory::createCardsArray(30), Factory::createCardsArray(30));
+        $game->start();
         $this->assertEquals(0, $game->currentPlayer()->board->count());
 
         $game->action(new PlayCard($game->currentPlayer()->hand->first()));
@@ -27,7 +28,9 @@ class BoardManagerTest extends TestCase
             [], [],
             [new Sheep(), new Sheep()], []
         );
+        $game->start();
         $this->assertEquals(2, $game->currentPlayer()->board->count());
+        $this->assertEquals(4, $game->currentPlayer()->hand->count());
 
         $game->action(new EndTurn());
         $game->action(new EndTurn());
@@ -36,6 +39,7 @@ class BoardManagerTest extends TestCase
         $playedCard = $game->currentPlayer()->hand->first();
         $game->action(new PlayCard($playedCard, $game->currentPlayer()->board->first()));
         $this->assertEquals(3, $game->currentPlayer()->board->count());
+        $this->assertEquals(4, $game->currentPlayer()->hand->count());
         $this->assertEquals($playedCard->id(), $game->currentPlayer()->board->first()->id());
 
         // place to right position
@@ -57,6 +61,7 @@ class BoardManagerTest extends TestCase
     public function testSummonMinion()
     {
         $game = Factory::createForTest();
+        $game->start();
 
         $minion = new Sheep();
         $game->boardManager->summonMinion($game->currentPlayer(), $minion);
@@ -67,6 +72,7 @@ class BoardManagerTest extends TestCase
     public function testVacantPlaces()
     {
         $game = Factory::createForTest();
+        $game->start();
         $this->assertTrue($game->boardManager->hasVacantPlace($game->currentPlayer()));
 
         $game->currentPlayer()->board->appendMany([new Sheep(), new Sheep(), new Sheep(), new Sheep(), new Sheep(), new Sheep(), new Sheep()]);

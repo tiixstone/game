@@ -14,8 +14,22 @@ class TurnEnded extends Event
      */
     public $player;
 
-    public function __construct(Player $player)
+    /**
+     * @var int
+     */
+    private $turnNumber;
+
+    public function __construct(Player $player, int $turnNumber)
     {
         $this->player = $player;
+        $this->turnNumber = $turnNumber;
+    }
+
+    /**
+     * @return int
+     */
+    public function turnNumber() : int
+    {
+        return $this->turnNumber;
     }
 }

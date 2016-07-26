@@ -2,6 +2,7 @@
 
 namespace Tiixstone\Game;
 
+use Tiixstone\Game\Card\Minion\ChillwindYeti;
 use Tiixstone\Game\Card\Minion\DireWolfAlpha;
 use Tiixstone\Game\Card\Minion\Sheep;
 use Tiixstone\Game\Card\Spell\TheCoin;
@@ -21,6 +22,9 @@ class Naming
 
             case TheCoin::class:
                 return 'The Coin';
+
+            case ChillwindYeti::class:
+                return 'Yeti';
 
             case DireWolfAlpha::class:
                 return 'Dire Wolf Alpha';

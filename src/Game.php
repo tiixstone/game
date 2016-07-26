@@ -5,6 +5,7 @@ namespace Tiixstone;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tiixstone\Game\Action;
 use Tiixstone\Game\Card\Minion;
+use Tiixstone\Game\Event\GameStarted;
 use Tiixstone\Game\Exception;
 use Tiixstone\Game\Manager\AttackManager;
 use Tiixstone\Game\Manager\BoardManager;
@@ -16,6 +17,15 @@ use Tiixstone\Game\Player;
 
 class Game
 {
+    const STATUS_PRE_START = 1;
+    const STATUS_STARTED = 2;
+    const STATUS_OVER = 3;
+
+    /**
+     * @var int
+     */
+    private $status = self::STATUS_PRE_START;
+
     /**
      * Номер хода
      *
@@ -23,7 +33,7 @@ class Game
      *
      * @var int
      */
-    private $moveNumber = 1;
+    private $turnNumber = 1;
 
     /**
      * Игрок, который ходит первым
@@ -82,44 +92,20 @@ class Game
         $this->cardsManager = $cardsManager;
         $this->boardManager = $boardManager;
         $this->attackManager = $attackManager;
-
-        $this->start();
-
-        $this->gameManager->beginTurn($this);
     }
 
     /**
      * @return $this
      */
-    protected function start()
+    public function start()
     {
-        $this->shufflePlayersDeck();
+        if($this->status() != self::STATUS_PRE_START) {
+            throw new Exception("Game is not in pre started status");
+        }
 
-        $this->drawCardsForPlayers();
+        $this->status = self::STATUS_STARTED;
 
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    private function shufflePlayersDeck()
-    {
-        $this->cardsManager->shuffleDeck($this->currentPlayer());
-        $this->cardsManager->shuffleDeck($this->idlePlayer());
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    private function drawCardsForPlayers()
-    {
-        $this->cardsManager->drawMany($this->currentPlayer(), 3);
-        $this->cardsManager->drawMany($this->idlePlayer(), 4);
-
-        $this->cardsManager->appendToHand($this->idlePlayer(), new Game\Card\Spell\TheCoin());
+        $this->gameManager->start($this);
 
         return $this;
     }
@@ -129,44 +115,29 @@ class Game
      * @return bool
      * @throws Exception
      */
-    final public function action(Action $action) : bool
+    final public function action(Action $action)
     {
-        if($this->isOver()) {
-            throw new Exception(
-                sprintf(
-                    "Can not process action. Game is over. Player1 hero health is %s, player2 hero health is %s",
-                    $this->player1->hero->health(),
-                    $this->player2->hero->health()
-            ), 1);
+        if($this->status() != self::STATUS_STARTED) {
+            throw new Exception("Game should be in started status. Run start method");
         }
-        
+
         $action->process($this);
 
-        $this->sendDeadMinionsToGraveyard();
+        $this->gameManager->afterAction($this);
 
-        return $this->isOver();
+        
+
+        if($this->isOver()) {
+            $this->status = self::STATUS_OVER;
+        }
     }
 
     /**
-     * @return $this
+     * @return int
      */
-    private function sendDeadMinionsToGraveyard()
+    public function status()
     {
-        /** @var Player $player */
-        foreach([$this->currentPlayer(), $this->idlePlayer()] as $player) {
-            /** @var Minion $minion */
-            foreach ($player->board->all() as $minion) {
-                if ($minion->isDead($this)) {
-                    $card = $player->board->pull($minion->id());
-
-                    $card->reset();
-
-                    $player->graveyard->append($card);
-                }
-            }
-        }
-
-        return $this;
+        return $this->status;
     }
 
     /**
@@ -174,7 +145,7 @@ class Game
      */
     public function currentPlayer() : Player
     {
-        return $this->moveNumber % 2 ? $this->player1 : $this->player2;
+        return $this->turnNumber % 2 ? $this->player1 : $this->player2;
     }
 
     /**
@@ -182,7 +153,7 @@ class Game
      */
     public function idlePlayer() : Player
     {
-        return $this->moveNumber % 2 ? $this->player2 : $this->player1;
+        return $this->turnNumber % 2 ? $this->player2 : $this->player1;
     }
 
     /**
@@ -197,9 +168,9 @@ class Game
     /**
      * @return int
      */
-    public function moveNumber()
+    public function turnNumber() : int
     {
-        return $this->moveNumber;
+        return $this->turnNumber;
     }
 
     /**
@@ -207,7 +178,7 @@ class Game
      */
     public function incrementMove()
     {
-        $this->moveNumber = $this->moveNumber + 1;
+        $this->turnNumber = $this->turnNumber + 1;
         
         return $this;
     }
@@ -221,10 +192,18 @@ class Game
     }
 
     /**
-     * @return Player
+     * Returns false if game is tied
+     *
+     * @return Player|false
      */
-    public function winner() : Player
+    public function winner()
     {
-        return $this->player1->hero->isAlive() ? $this->player1 : $this->player2;
+        if(!$this->player1->hero->isAlive()) {
+            return $this->player2;
+        } elseif(!$this->player2->hero->isAlive()) {
+            return $this->player1;
+        } else {
+            return false;
+        }
     }
 }

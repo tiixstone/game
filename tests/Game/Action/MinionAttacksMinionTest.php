@@ -16,6 +16,7 @@ class MinionAttacksMinionTest extends TestCase
     public function testHeroTakesDamage()
     {
         $game = Factory::createForTest(Factory::createCardsArray(30), Factory::createCardsArray(30));
+        $game->start();
         $this->assertEquals(30, $game->idlePlayer()->hero->health());
 
         $game->action(new Game\Action\PlayCard($game->currentPlayer()->hand->first()));
@@ -32,6 +33,7 @@ class MinionAttacksMinionTest extends TestCase
         $this->expectExceptionCode(Game\Exception::MINION_CAN_NOT_ATTACK_ZERO_ATTACK_RATE);
 
         $game = Factory::createForTest();
+        $game->start();
 
         $card = new Sheep();
         $game->boardManager->summonMinion($game->player1, $card);
@@ -51,6 +53,7 @@ class MinionAttacksMinionTest extends TestCase
         $this->expectExceptionCode(Game\Exception::INVALID_CARD);
 
         $game = Factory::createForTest();
+        $game->start();
 
         $card = new Sheep();
         $game->boardManager->summonMinion($game->player1, $card);
@@ -71,6 +74,7 @@ class MinionAttacksMinionTest extends TestCase
         $this->expectExceptionCode(Game\Exception::INVALID_CARD);
 
         $game = Factory::createForTest();
+        $game->start();
 
         $sheep = new Sheep();
         $game->boardManager->summonMinion($game->player1, $sheep);
@@ -88,6 +92,7 @@ class MinionAttacksMinionTest extends TestCase
     public function testMinionsTakeDamage()
     {
         $game = Factory::createForTest();
+        $game->start();
 
         $card = new Sheep();
         $game->boardManager->summonMinion($game->player1, $card);
@@ -113,6 +118,7 @@ class MinionAttacksMinionTest extends TestCase
         $this->expectExceptionCode(Game\Exception::MINION_EXHAUSTED_CANT_ATTACK);
 
         $game = Factory::createForTest();
+        $game->start();
 
         $card = new Sheep();
         $game->boardManager->summonMinion($game->player1, $card);
@@ -129,6 +135,7 @@ class MinionAttacksMinionTest extends TestCase
         $this->expectExceptionCode(Game\Exception::MINION_EXHAUSTED_CANT_ATTACK);
 
         $game = Factory::createForTest();
+        $game->start();
 
         $sheep1 = new Sheep();
         $sheep2 = new Sheep();

@@ -14,12 +14,13 @@ class EndTurnTest extends TestCase
     public function testMoveIncrements()
     {
         $game = Factory::createForTest();
-        $this->assertEquals(1, $game->moveNumber());
+        $game->start();
+        $this->assertEquals(1, $game->turnNumber());
 
         $game->action(new Game\Action\EndTurn());
-        $this->assertEquals(2, $game->moveNumber());
+        $this->assertEquals(2, $game->turnNumber());
 
         $game->action(new Game\Action\EndTurn());
-        $this->assertEquals(3, $game->moveNumber());
+        $this->assertEquals(3, $game->turnNumber());
     }
 }

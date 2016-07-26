@@ -11,6 +11,7 @@ class TheCoinTest extends TestCase
     public function testAddMana()
     {
         $game = Factory::createForTest();
+        $game->start();
 
         $this->assertEquals(1, $game->currentPlayer()->availableMana());
         $this->assertEquals(1, $game->currentPlayer()->manaCrystals());

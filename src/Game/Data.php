@@ -23,6 +23,7 @@ class Data
     public function all(Game $game)
     {
         return [
+            'moveNumber' => $game->turnNumber(),
             'players' => [
                 $game->player1->id() => $this->playerData($game, $game->player1),
                 $game->player2->id() => $this->playerData($game, $game->player2),

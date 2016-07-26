@@ -25,6 +25,7 @@ class GameTest extends TestCase
         }
 
         $game = Factory::createForTest($player1Deck, $player2Deck);
+        $game->start();
 
         // начало игры, 1 ход __________________________________________________________________________________________
         $this->assertTrue($game->isPlayerCurrent($game->player1));
@@ -105,7 +106,7 @@ class GameTest extends TestCase
     private function checkTurnBegin(Game $game, $moveNumber)
     {
         $this->assertFalse($game->isOver());
-        $this->assertEquals($moveNumber, $game->moveNumber());
+        $this->assertEquals($moveNumber, $game->turnNumber());
     }
 
     private function checkPlayer(Game\Player $player, $handCount, $deckCount, $boardCount, $graveyardCount, $manaAvailable, $manaCrystals)

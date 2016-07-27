@@ -8,9 +8,8 @@ use Tiixstone\Factory;
 use Tiixstone\Game;
 use Tiixstone\Game\Action\EndTurn;
 use Tiixstone\Game\Action\MinionAttacksHero;
-use Tiixstone\Game\Action\MinionAttacksMinion;
-use Tiixstone\Game\Card\Minion\ChillwindYeti;
 use Tiixstone\Game\Card\Minion\Sheep;
+use Tiixstone\Game\Card\Set\Basic\ChillwindYeti;
 
 class MinionAttacksHeroTest extends TestCase
 {

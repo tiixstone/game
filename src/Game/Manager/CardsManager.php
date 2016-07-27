@@ -54,9 +54,9 @@ class CardsManager
      * @return $this
      * @throws Game\Exception
      */
-    public function draw(Game\Player $player) : self
+    public function draw(Game $game, Game\Player $player) : self
     {
-        $card = $this->getCardFromDeck($player);
+        $card = $this->getCardFromDeck($game, $player);
 
         if($card instanceof Game\Card) {
             $this->appendToHand($player, $card);
@@ -70,10 +70,10 @@ class CardsManager
      * @param int $amount
      * @return $this
      */
-    public function drawMany(Game\Player $player, int $amount = 1) : self
+    public function drawMany(Game $game, Game\Player $player, int $amount) : self
     {
         for ($i = 0; $i < $amount; $i++) {
-            $this->draw($player);
+            $this->draw($game, $player);
         }
 
         return $this;
@@ -84,14 +84,13 @@ class CardsManager
      * @return Game\Card
      * @throws Game\Exception
      */
-    public function getCardFromDeck(Game\Player $player)
+    public function getCardFromDeck(Game $game, Game\Player $player)
     {
         if($player->deck->count()) {
             return $player->deck->shift();
         }
 
-        $player->hero->reduceHealth($player->fatigue());
-        $player->incrementFatigue();
+        $game->attackManager->fatigue($game, $player);
 
         return false;
     }
@@ -133,9 +132,5 @@ class CardsManager
     public function shuffleToDeck(Game\Player $player, Game\Card $card) : self
     {
         return $this;
-    }
-
-    public function canBePlayed($id)
-    {
     }
 }

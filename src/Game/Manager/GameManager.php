@@ -4,6 +4,7 @@ namespace Tiixstone\Game\Manager;
 
 use Tiixstone\Game;
 use Tiixstone\Game\Card\Minion;
+use Tiixstone\Game\Card\Set\Basic\TheCoin;
 use Tiixstone\Game\Event\GameStarted;
 use Tiixstone\Game\Player;
 
@@ -19,8 +20,20 @@ class GameManager
      */
     protected $playerMaximumManaLimit = 10;
 
+    /**
+     * @var Game\Coin
+     */
+    public $coin;
+
+    public function __construct(Game\Coin $coin)
+    {
+        $this->coin = $coin;
+    }
+
     public function start(Game $game)
     {
+        $this->tossCoin($game);
+
         $game->eventDispatcher->dispatch(GameStarted::NAME, new GameStarted($game->currentPlayer(), $game->idlePlayer()));
 
         $this->shufflePlayersDeck($game);
@@ -28,6 +41,21 @@ class GameManager
         $this->drawCardsForPlayers($game);
 
         $this->beginTurn($game);
+
+        return $this;
+    }
+
+    /**
+     * @param Game $game
+     * @return $this
+     * @throws Game\Exception
+     */
+    private function tossCoin(Game $game)
+    {
+        $this->coin->toss($game->player1, $game->player2);
+
+        $game->firstToGoPlayer = $this->coin->winner();
+        $game->secondToGoPlayer = $this->coin->loser();
 
         return $this;
     }
@@ -56,7 +84,7 @@ class GameManager
         $this->addPlayerMaximumMana($game, $game->currentPlayer(), 1);
         $this->setPlayerAvailableMana($game, $game->currentPlayer(), $game->currentPlayer()->maximumMana());
 
-        $game->cardsManager->draw($game->currentPlayer());
+        $game->cardsManager->draw($game, $game->currentPlayer());
 
         $this->removeMinionsExhaustion($game);
 
@@ -92,10 +120,10 @@ class GameManager
      */
     private function drawCardsForPlayers(Game $game)
     {
-        $game->cardsManager->drawMany($game->currentPlayer(), 3);
-        $game->cardsManager->drawMany($game->idlePlayer(), 4);
+        $game->cardsManager->drawMany($game, $game->currentPlayer(), 3);
+        $game->cardsManager->drawMany($game, $game->idlePlayer(), 4);
 
-        $game->cardsManager->appendToHand($game->idlePlayer(), new Game\Card\Spell\TheCoin());
+        $game->cardsManager->appendToHand($game->idlePlayer(), new TheCoin());
 
         return $this;
     }
@@ -224,6 +252,20 @@ class GameManager
             }
         }
 
+        return $this;
+    }
+
+    /**
+     * @param Game $game
+     * @return $this
+     */
+    public function end(Game $game)
+    {
+        $game->eventDispatcher->dispatch(
+            Game\Event\GameEnded::NAME,
+            new Game\Event\GameEnded($game->winner(), $game->loser())
+        );
+        
         return $this;
     }
 }

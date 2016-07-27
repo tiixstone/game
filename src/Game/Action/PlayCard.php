@@ -34,13 +34,13 @@ class PlayCard extends Action
 
         $game->currentPlayer()->hand->pull($this->card->id());
 
+        $game->eventDispatcher->dispatch(CardPlayed::NAME, new CardPlayed($game->currentPlayer(), $this->card));
+
         if($this->card instanceof Game\Card\Minion) {
             $game->boardManager->placeCardOnBoard($game->currentPlayer(), $this->card, $this->targetCard);
         }
 
-        $this->card->play($game);
-
-        $game->eventDispatcher->dispatch(CardPlayed::NAME, new CardPlayed($game->currentPlayer(), $this->card));
+        $this->card->play($game, $this->targetCard);
     }
 
     /**

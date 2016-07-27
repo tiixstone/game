@@ -36,15 +36,21 @@ class Game
     private $turnNumber = 1;
 
     /**
-     * Игрок, который ходит первым
-     *
+     * @var Player
+     */
+    public $firstToGoPlayer;
+
+    /**
+     * @var Player
+     */
+    public $secondToGoPlayer;
+
+    /**
      * @var Player
      */
     public $player1;
 
     /**
-     * Игрок, который ходит вторым
-     *
      * @var Player
      */
     public $player2;
@@ -127,6 +133,8 @@ class Game
 
         if($this->isOver()) {
             $this->status = self::STATUS_OVER;
+
+            $this->gameManager->end($this);
         }
     }
 
@@ -143,7 +151,7 @@ class Game
      */
     public function currentPlayer() : Player
     {
-        return $this->turnNumber % 2 ? $this->player1 : $this->player2;
+        return $this->turnNumber % 2 ? $this->firstToGoPlayer : $this->secondToGoPlayer;
     }
 
     /**
@@ -151,7 +159,7 @@ class Game
      */
     public function idlePlayer() : Player
     {
-        return $this->turnNumber % 2 ? $this->player2 : $this->player1;
+        return $this->turnNumber % 2 ? $this->secondToGoPlayer : $this->firstToGoPlayer;
     }
 
     /**
@@ -203,5 +211,17 @@ class Game
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return bool|Player
+     */
+    public function loser()
+    {
+        if(!$this->winner()) {
+            return false;
+        }
+
+        return $this->winner()->id() == $this->player1->id() ? $this->player2 : $this->player1;
     }
 }

@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Tiixstone\Game\Card\Minion;
+namespace Tiixstone\Game\Card\Set\Basic;
 
 use Tiixstone\Game\Card\Minion;
 
-class ChillwindYeti extends Minion
+class OasisSnapjaw extends Minion
 {
     /**
      * @return int
@@ -17,16 +17,16 @@ class ChillwindYeti extends Minion
     /**
      * @return int
      */
-    public function defaultHealth() : int
+    public function defaultAttackRate() : int
     {
-        return 5;
+        return 2;
     }
 
     /**
      * @return int
      */
-    public function defaultAttackRate() : int
+    public function defaultHealth() : int
     {
-        return 4;
+        return 7;
     }
 }

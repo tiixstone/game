@@ -16,7 +16,7 @@ class TheCoinTest extends TestCase
         $this->assertEquals(1, $game->currentPlayer()->maximumMana());
         $this->assertEquals(1, $game->currentPlayer()->availableMana());
 
-        $theCoin = new Game\Card\Spell\TheCoin();
+        $theCoin = new Game\Card\Set\Basic\TheCoin();
         $game->currentPlayer()->hand->append($theCoin);
 
         $game->action(new Game\Action\PlayCard($theCoin));

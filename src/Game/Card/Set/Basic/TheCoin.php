@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Tiixstone\Game\Card\Spell;
+namespace Tiixstone\Game\Card\Set\Basic;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Tiixstone\Game;
+use Tiixstone\Game\Card\Minion;
 use Tiixstone\Game\Card\Spell;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class TheCoin
@@ -26,7 +27,7 @@ class TheCoin extends Spell
     /**
      * @return TheCoin
      */
-    public function cast(Game $game)
+    public function cast(Game $game, Minion $target = null)
     {
         $game->gameManager->addPlayerAvailableMana($game, $game->currentPlayer(), 1);
 

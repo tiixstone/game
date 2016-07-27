@@ -4,6 +4,7 @@ namespace Tiixstone;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tiixstone\Game\Card\Minion\Sheep;
+use Tiixstone\Game\Coin\PredictableCoin;
 use Tiixstone\Game\Hero\Jaina;
 use Tiixstone\Game\Manager\AttackManager;
 use Tiixstone\Game\Manager\BoardManager;
@@ -36,7 +37,7 @@ class Factory
         $player2 = new \Tiixstone\Game\Player('Agent Smith', $player2Hero, $player2Deck, $player2Hand, $player2Board);
 
         $eventDispatcher = new EventDispatcher();
-        $gameManager = new GameManager();
+        $gameManager = new GameManager(new PredictableCoin());
         $cardsManager = new Game\Manager\CardsManager();
         $boardManager = new BoardManager();
         $attackManager = new AttackManager();

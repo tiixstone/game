@@ -22,12 +22,12 @@ class AttackManager
      */
     public function minionTakeDamage(Game $game, Minion $minion, int $damage)
     {
-        $minion->addDamage($damage);
-
         $game->eventDispatcher->dispatch(
             Game\Event\MinionTookDamage::NAME,
             new Game\Event\MinionTookDamage($minion, $damage)
         );
+
+        $minion->addDamage($damage);
 
         return $this;
     }
@@ -41,6 +41,10 @@ class AttackManager
     public function heroTakeDamage(Game $game, Hero $hero, int $damage)
     {
         $hero->reduceHealth($damage);
+
+        if(!$hero->isAlive()) {
+            $game->eventDispatcher->dispatch(Game\Event\HeroDestroyed::NAME, new Game\Event\HeroDestroyed($game, $hero));
+        }
 
         return $this;
     }
@@ -61,5 +65,36 @@ class AttackManager
         $player->graveyard->append($minion);
         
         return $this;
+    }
+
+    /**
+     * @param Game $game
+     * @param Game\Player $player
+     * @param Hero $hero
+     * @return $this
+     */
+    public function fatigue(Game $game, Game\Player $player)
+    {
+        $fatigue = $player->fatigue();
+
+        $game->eventDispatcher->dispatch(
+            Game\Event\FatigueDealt::NAME,
+            new Game\Event\FatigueDealt($game, $player->hero, $fatigue)
+        );
+
+        $this->heroTakeDamage($game, $player->hero, $fatigue);
+
+        $player->incrementFatigue();
+
+        return $this;
+    }
+
+    /**
+     * @param Game $game
+     * @return int
+     */
+    public function spellDamageBoost(Game $game) : int
+    {
+        return 0;
     }
 }

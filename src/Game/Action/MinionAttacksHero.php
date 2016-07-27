@@ -24,7 +24,14 @@ class MinionAttacksHero extends Action
             throw $exception;
         }
 
-        $game->attackManager->heroTakeDamage($game, $game->idlePlayer()->hero, $this->attacker->attackRate($game));
+        $damage = $this->attacker->attackRate($game);
+
+        $game->eventDispatcher->dispatch(
+            Game\Event\MinionAttackedHero::NAME,
+            new Game\Event\MinionAttackedHero($this->attacker, $game->idlePlayer()->hero, $damage)
+        );
+
+        $game->attackManager->heroTakeDamage($game, $game->idlePlayer()->hero, $damage);
 
         $this->attacker->setExhausted(true);
     }

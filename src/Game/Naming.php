@@ -30,7 +30,8 @@ class Naming
                 return 'Dire Wolf Alpha';
 
             default:
-                throw new Exception(sprintf("No name for class [%s]", get_class($class)));
+                $parts = explode('\\', get_class($class));
+                return end($parts);
         }
     }
 }

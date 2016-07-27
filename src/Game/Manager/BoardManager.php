@@ -19,7 +19,7 @@ class BoardManager
     public function summonMinion(Game\Player $player, Game\Card\Minion $minion)
     {
         if($this->hasVacantPlace($player)) {
-            $player->board->append($minion);
+            return $this->placeCardOnBoard($player, $minion);
         }
 
         return $this;
@@ -32,7 +32,7 @@ class BoardManager
      * @return $this
      * @throws Game\Exception
      */
-    public function placeCardOnBoard(Game\Player $player, Game\Card\Minion $card, Game\Card\Minion $rightMinion = null)
+    public function placeCardOnBoard(Game\Player $player, Game\Card\Minion $minion, Game\Card\Minion $rightMinion = null)
     {
         if(!$this->hasVacantPlace($player)) {
             throw new Game\Exception("There is no vacant place on board", Game\Exception::EXCEEDED_PLACES_ON_BOARD);
@@ -43,9 +43,9 @@ class BoardManager
         // Если поле не пустое и не указано существо, значит
         // существо надо поставить в крайнюю правую позицию
         if($player->board->isEmpty() OR !$rightMinion) {
-            $player->board->append($card);
+            $player->board->append($minion);
         } else {
-           $player->board->addBefore($card, $rightMinion->id());
+           $player->board->addBefore($minion, $rightMinion->id());
         }
 
         return $this;

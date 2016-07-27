@@ -14,8 +14,13 @@ abstract class Spell extends Card
 
     abstract public function cast(Game $game);
 
-    public function play(Game $game)
+    /**
+     * @param Game $game
+     */
+    final public function play(Game $game)
     {
         $this->cast($game);
+
+        return $this;
     }
 }

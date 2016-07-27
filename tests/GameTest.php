@@ -8,7 +8,7 @@ use Tiixstone\Game;
 use Tiixstone\Game\Action\EndTurn;
 use Tiixstone\Game\Action\PlayCard;
 use Tiixstone\Game\Card\Minion\Sheep;
-use Tiixstone\Game\Card\Spell\TheCoin;
+use Tiixstone\Game\Card\Set\Basic\TheCoin;
 
 class GameTest extends TestCase
 {

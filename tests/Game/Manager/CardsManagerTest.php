@@ -3,6 +3,7 @@
 namespace Tests\Tiixstone\Game\Manager;
 
 use PHPUnit\Framework\TestCase;
+use Tiixstone\Factory;
 use Tiixstone\Game\Card\Collection\Board;
 use Tiixstone\Game\Card\Collection\Deck;
 use Tiixstone\Game\Card\Collection\Hand;
@@ -14,33 +15,28 @@ use Tiixstone\Game\Player;
 
 class CardsManagerTest extends TestCase
 {
-    /**
-     * @var CardsManager
-     */
-    public $manager;
-
-    public function setUp()
+    public function testDraw()
     {
-        $this->manager = new CardsManager();
+        $game = Factory::createForTest(Factory::createCardsArray(30), Factory::createCardsArray(30));
+        $game->start();
+
+        $this->assertEquals(4, $game->currentPlayer()->hand->count());
+
+        $game->cardsManager->draw($game, $game->currentPlayer());
+        $this->assertEquals(5, $game->currentPlayer()->hand->count());
     }
 
     public function testOverdraw()
     {
-        $hero = new Jaina();
+        $game = Factory::createForTest(Factory::createCardsArray(30), Factory::createCardsArray(30));
+        $game->start();
 
-        $deck = new Deck([
-            new Sheep(),
-        ]);
-        $hand = new Hand([
-            new Sheep(), new Sheep(), new Sheep(), new Sheep(), new Sheep(),
-            new Sheep(), new Sheep(), new Sheep(), new Sheep(), new Sheep(),
-        ]);
-        $board = new Board();
+        $this->assertEquals(4, $game->currentPlayer()->hand->count());
 
-        $player = new Player('test', $hero, $deck, $hand, $board);
+        $game->cardsManager->drawMany($game, $game->currentPlayer(), 6);
+        $this->assertEquals(10, $game->currentPlayer()->hand->count());
 
-        $this->manager->draw($player);
-
-        $this->assertEquals(10, $hand->count());
+        $game->cardsManager->draw($game, $game->currentPlayer());
+        $this->assertEquals(10, $game->currentPlayer()->hand->count());
     }
 }

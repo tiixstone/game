@@ -4,8 +4,8 @@ namespace Tests\Tiixstone\Game\Manager;
 
 use PHPUnit\Framework\TestCase;
 use Tiixstone\Factory;
-use Tiixstone\Game\Card\Minion\ChillwindYeti;
 use Tiixstone\Game\Card\Minion\Sheep;
+use Tiixstone\Game\Card\Set\Basic\ChillwindYeti;
 
 class AttackManagerTest extends TestCase
 {
